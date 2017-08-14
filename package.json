@@ -7,6 +7,9 @@
     "start": "babel-node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": "6.11.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/chenh1/samplr-api.git"
