@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node index.js",
-    "test": ""
+    "test": "babel-node mockFile.js"
   },
   "engines": {
     "node": "6.11.0"
