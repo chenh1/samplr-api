@@ -1,0 +1,10 @@
+language: node_js
+cache: yarn
+node_js:
+  - "7"
+  - "6"
+  - "5"
+  - "4"
+script: yarn run test:CI
+after_success:
+  - yarn run test:cover:CI
