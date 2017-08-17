@@ -1,1 +1,3 @@
-return "mockFile";
+(function () {
+    return "mockFile";
+})();
