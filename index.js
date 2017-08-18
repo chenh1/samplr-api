@@ -21,7 +21,8 @@ app.get('/tracks', function(req, res) {
     {"id": 0, "divisions": 4},
     {"id": 1, "divisions": 16},
     {"id": 2, "divisions": 3},
-    {"id": 3, "divisions": 8}
+    {"id": 3, "divisions": 8},
+    {"id": 4, "divisions": 2}
   ]);
 });
 
