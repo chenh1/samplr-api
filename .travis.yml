@@ -1,10 +1,3 @@
 language: node_js
 node_js:
 - '6'
-deploy:
-  provider: heroku
-  api_key:
-    - secure: Mu5s6/K9q4lqt7rZniYcs0JC9lHL+eA6Gm3CLjgcn8xlu95gslTIZDWCmg1eDSCMswV7OWvMIOwrn6nXQivnrmnLN97IsgSRQnlgwPQ5R0DckzZSNOqp9OkuZetoo8gExTHCqLDvd6BGBrsOmxvGCoUnSBSgx4wwvXkkaPO9myVN4a2kYZXa4S3LZ4iVBiya3QNBX2PGb/OAPsqxO20JZdOMl1cDJbTCC+XyTH0oC1VuiagX//5lUUbkg00Eo1WK4KdUJXHDqNHHNvIUx2fVzLKzLM0doPD/W5ony6xrRsnTodDNfVpDdPWBO7zylkrZ0lkUZtH1wY1KCOz+JOcPpaHBWGGHaijus/qCBXBwPy7jbxbfu5XbhbmaxbpeZcEfmlSgXQdvmYerpOVCHk1NjYnDh55KCQfYhYlUyFswqdn2WeehyvF3OH6WMNR5APiAX+FxY3ZgyzCsVRdY2JWjXg9oJu1y8byRx2/IZ5gKToZehtHI3seshxq7JOqkYV5oi11IJ13JYzjnxHFuT83CsQ6X26FCar+6zN2yLUPKDQ2gSt3K6Qsctdfiejsd6Yc9xDzbXvkOUUJVP1irSjnpNHZV+EhEMbprYBKbqc8N7RbW/NUtfDYPw8TObw9KdEDhLivpGvn2pzlj2PaT0ClFR2JpTGMay74zAHhD8OuAmPI=
-  app: samplr-api
-  on:
-    repo: chenh1/samplr-api
