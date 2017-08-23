@@ -1,5 +1,36 @@
 import express from 'express';
 import cors from 'cors';
+import { Pool, Client } from 'pg';
+
+//POSTGRES BEGINS
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'myDb',
+  password: 'frontier',
+  port: 5432,
+})
+
+pool.query('SELECT NOW()', (err, res) => {
+  console.log(err, res)
+  pool.end()
+})
+
+const client = new Client({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'myDb',
+  password: 'frontier',
+  port: 5432,
+})
+client.connect()
+
+client.query('SELECT NOW()', (err, res) => {
+  console.log(err, res)
+  client.end()
+});
+
+//EXPRESS BEGINS
 
 const app = express();
 app.use(cors());
