@@ -12,7 +12,7 @@ const pool = new Pool({
 })
 
 pool.query('SELECT NOW()', (err, res) => {
-  console.log(err, res)
+  console.log('POOL RES: ', res)
   pool.end()
 })
 
@@ -25,9 +25,17 @@ const client = new Client({
 })
 client.connect()
 
-client.query('SELECT NOW()', (err, res) => {
-  console.log(err, res)
-  client.end()
+const text = 'INSERT INTO persons(personid, lastname, firstname, address, city) VALUES($1, $2, $3, $4, $5) RETURNING *';
+const values = ['0', 'Chen', 'Howard', '123 Main St', 'Anywhere'];
+
+client.query(text, values, (err, res) => {
+  if (err) {
+    console.log(err.stack)
+  } else {
+    console.log(res.rows[0])
+  }
+
+  client.end();
 });
 
 //EXPRESS BEGINS
