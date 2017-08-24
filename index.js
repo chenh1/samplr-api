@@ -3,7 +3,7 @@ import cors from 'cors';
 import { Pool, Client } from 'pg';
 
 //POSTGRES BEGINS
-const connectionString = process.env.DATABASE_URL
+const connectionString = process.env.DATABASE_URL || DATABASE_URL;
 
 const pool = new Pool({
   connectionString: connectionString,
