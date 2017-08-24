@@ -25,12 +25,6 @@ const text = 'INSERT INTO persons(personid, lastname, firstname, address, city) 
 const values = ['1', 'Chen', 'Howard', '123 Main St', 'Anywhere'];
 
 client.query(text, values, (err, res) => {
-  if (err) {
-    console.log(err.stack)
-  } else {
-    console.log(res.rows[0])
-  }
-
   client.end();
 });
 
