@@ -3,30 +3,26 @@ import cors from 'cors';
 import { Pool, Client } from 'pg';
 
 //POSTGRES BEGINS
+const connectionString = process.env.DATABASE_URL
+
 const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'myDb',
-  password: 'frontier',
-  port: 5432,
+  connectionString: connectionString,
+  ssl: true
 })
 
 pool.query('SELECT NOW()', (err, res) => {
-  console.log('POOL RES: ', res)
+  console.log(err, res)
   pool.end()
 })
 
 const client = new Client({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'myDb',
-  password: 'frontier',
-  port: 5432,
+  connectionString: connectionString,
+  ssl: true
 })
 client.connect()
 
 const text = 'INSERT INTO persons(personid, lastname, firstname, address, city) VALUES($1, $2, $3, $4, $5) RETURNING *';
-const values = ['0', 'Chen', 'Howard', '123 Main St', 'Anywhere'];
+const values = ['1', 'Chen', 'Howard', '123 Main St', 'Anywhere'];
 
 client.query(text, values, (err, res) => {
   if (err) {
