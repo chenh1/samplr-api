@@ -47,11 +47,11 @@ app.get('/visibleEffect', function(req, res) {
 
 app.get('/tracks', function(req, res) {
   res.json([
-    {"id": 0, "divisions": 4},
-    {"id": 1, "divisions": 16},
-    {"id": 2, "divisions": 3},
-    {"id": 3, "divisions": 8},
-    {"id": 4, "divisions": 2}
+    {"id": 1, "divisions": 4},
+    {"id": 2, "divisions": 16},
+    {"id": 3, "divisions": 3},
+    {"id": 4, "divisions": 8},
+    {"id": 5, "divisions": 2}
   ]);
 });
 
