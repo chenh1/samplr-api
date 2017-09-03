@@ -117,6 +117,7 @@ app.use('/graphql', graphqlHTTP({
   graphiql: false,
 }));
 
+/*
 app.get('/tracks', function(req, res) {
   res.json([
     {"id": 1, "divisions": 4},
@@ -125,7 +126,7 @@ app.get('/tracks', function(req, res) {
     {"id": 4, "divisions": 8},
     {"id": 5, "divisions": 2}
   ]);
-});
+});*/
 
 app.listen(app.get('port'), function() {
   console.log("Running on localhost:" + app.get('port')); 
