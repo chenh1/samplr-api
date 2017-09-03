@@ -3,7 +3,7 @@ import events from 'events';
 import cors from 'cors';
 import { Pool, Client } from 'pg';
 import graphqlHTTP from 'express-graphql';
-import { buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString } from 'graphql';
+import { buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
 
 //POSTGRES BEGINS
 const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/';
@@ -65,7 +65,8 @@ const getPersonData = (prop) => {
   return prop;
 }
 
-const queryPersonData = (key) => {
+
+const queryData = (key, table) => {
   dataNodes++;
   console.log('in query, after incrementing: ', dataNodes)
   return new Promise((resolve) => {
@@ -77,7 +78,7 @@ const queryPersonData = (key) => {
     } else {
       console.log('queried');
       personData.loading = true;
-      pool.query('SELECT * FROM persons', (err, res) => {
+      pool.query('SELECT * FROM ' + table, (err, res) => {
         resolve(setPersonData(res.rows[0], key));
       });
     }
@@ -90,23 +91,43 @@ const schema = new GraphQLSchema({
     fields: () => ({
       personid: {
         type: GraphQLInt,
-        resolve: () => (queryPersonData('personid'))
+        resolve: () => (queryData('personid', 'persons'))
       },
       lastname: {
         type: GraphQLString,
-        resolve: () => (queryPersonData('lastname'))
+        resolve: () => (queryData('lastname', 'persons'))
       },
       firstname: {
         type: GraphQLString,
-        resolve: () => (queryPersonData('firstname'))
+        resolve: () => (queryData('firstname', 'persons'))
       },
       address: {
         type: GraphQLString,
-        resolve: () => (queryPersonData('address'))
+        resolve: () => (queryData('address', 'persons'))
       },
       city: {
         type: GraphQLString,
-        resolve: () => (queryPersonData('city'))
+        resolve: () => (queryData('city', 'persons'))
+      },
+      sessionid: {
+        type: GraphQLInt,
+        resolve: () => (queryData('id', 'sessions'))
+      },
+      play: {
+        type: GraphQLBoolean,
+        resolve: () => (queryData('play', 'sessions'))
+      },
+      recording: {
+        type: GraphQLBoolean,
+        resolve: () => (queryData('recording', 'sessions'))
+      },
+      tempo: {
+        type: GraphQLInt,
+        resolve: () => (queryData('tempo', 'sessions'))
+      },
+      livenode: {
+        type: GraphQLInt,
+        resolve: () => (queryData('livenode', 'sessions'))
       }
     })
   })
