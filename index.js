@@ -53,6 +53,7 @@ const setPersonData = (set, key) => {
 const getPersonData = (prop) => {
   dataNodes--;
   console.log('count: ', dataNodes);
+
   if (dataNodes === 0) {
     personData = {};
     dataLoad = new events.EventEmitter();
@@ -63,6 +64,7 @@ const getPersonData = (prop) => {
 }
 
 const queryPersonData = (key) => {
+  dataNodes++;
   return new Promise((resolve) => {
     console.log('in query: ', personData);
     if (Object.keys(personData).length) {
@@ -73,7 +75,6 @@ const queryPersonData = (key) => {
       console.log('queried');
       personData.loading = true;
       pool.query('SELECT * FROM persons', (err, res) => {
-        dataNodes = Object.keys(res.rows[0]).length;
         resolve(setPersonData(res.rows[0], key));
       });
     }
