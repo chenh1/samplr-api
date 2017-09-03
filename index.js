@@ -84,6 +84,16 @@ const queryData = (key, table) => {
     }
   });
 }
+
+const updateData = (isPlay) => {
+  console.log('updating', isPlay);
+  return new Promise((resolve) => {
+    pool.query('UPDATE sessions SET play = '+ isPlay +' WHERE id = 1', (err, res) => {
+      console.log('updated', res);
+      resolve(res);
+    })
+  })
+}
 // Construct a schema, using GraphQL schema language
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -130,6 +140,20 @@ const schema = new GraphQLSchema({
         resolve: () => (queryData('livenode', 'sessions'))
       }
     })
+  }),
+
+  mutation: new GraphQLObjectType({
+    name: 'Mutation',
+    fields: () => ({
+      startPlay: {
+        type: GraphQLBoolean,
+        resolve: () => (updateData('true'))
+      },
+      stopPlay: {
+        type: GraphQLBoolean,
+        resolve: () => (updateData('false'))
+      }
+    })
   })
 })
 
@@ -137,27 +161,21 @@ const app = express();
 app.use(cors());
 app.set('port', (process.env.PORT || 4000));
 
-app.use('/graphql', graphqlHTTP({
+app.post('/graphql', graphqlHTTP({
   schema: schema,
-  graphiql: false,
+  graphiql: true,
 }));
 
-/*
-app.get('/tracks', function(req, res) {
-  res.json([
-    {"id": 1, "divisions": 4},
-    {"id": 2, "divisions": 16},
-    {"id": 3, "divisions": 3},
-    {"id": 4, "divisions": 8},
-    {"id": 5, "divisions": 2}
-  ]);
-});*/
+app.get('/graphql', graphqlHTTP({
+  schema: schema,
+  graphiql: true,
+}));
 
 app.listen(app.get('port'), function() {
   console.log("Running on localhost:" + app.get('port')); 
 });
 
-//EXPRESS BEGINS
+
 /*
 const app = express();
 app.use(cors());
@@ -171,6 +189,16 @@ app.get('/', function(request, response) {
 app.get('/visibleEffect', function(req, res) {
   res.json([
     {"id": 0, "counter": 0}
+  ]);
+});
+
+app.get('/tracks', function(req, res) {
+  res.json([
+    {"id": 1, "divisions": 4},
+    {"id": 2, "divisions": 16},
+    {"id": 3, "divisions": 3},
+    {"id": 4, "divisions": 8},
+    {"id": 5, "divisions": 2}
   ]);
 });
 
