@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { Pool, Client } from 'pg';
 import graphqlHTTP from 'express-graphql';
-import { buildSchema } from 'graphql';
+import { buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString } from 'graphql';
 
 //POSTGRES BEGINS
 const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/';
@@ -33,36 +33,80 @@ client.connect()
   client.end();
 //});
 
-// Construct a schema, using GraphQL schema language
-const schema = buildSchema(`
-  type Query {
-    hello: Person
-  }
+pool.query('SELECT * FROM persons', (err, res) => {
+  console.log(res.rows[0]);
+});
 
-  type Person {
-    personid: ID
-    lastname: String
-    firstname: String
-    address: String
-    city: String
-  }
-`);
-
-// The root provides a resolver function for each API endpoint
-const root = {
-  hello: () => {
-    return pool.query('SELECT * FROM persons', (err, res) => {
-      console.log(res.rows[0])
-      pool.end();
-      return res;
+let personData = {};
+const getPersonData = () => {
+  return new Promise((resolve) => {
+    pool.query('SELECT * FROM persons', (err, res) => {
+      resolve(res.rows[0].personid);
     });
-  },
-};
+  });
+}
+// Construct a schema, using GraphQL schema language
+const schema = new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: 'Query',
+    fields: () => ({
+      personid: {
+        type: GraphQLInt,
+        resolve: () => {
+          return new Promise((resolve) => {
+            pool.query('SELECT * FROM persons', (err, res) => {
+              resolve(res.rows[0].personid);
+            });
+          })
+        }
+      },
+      lastName: {
+        type: GraphQLString,
+        resolve: () => {
+          return new Promise((resolve) => {
+            pool.query('SELECT * FROM persons', (err, res) => {
+              resolve(res.rows[0].lastname);
+            });
+          })
+        }
+      },
+      firstname: {
+        type: GraphQLString,
+        resolve: () => {
+          return new Promise((resolve) => {
+            pool.query('SELECT * FROM persons', (err, res) => {
+              resolve(res.rows[0].firstname);
+            });
+          })
+        }
+      },
+      address: {
+        type: GraphQLString,
+        resolve: () => {
+          return new Promise((resolve) => {
+            pool.query('SELECT * FROM persons', (err, res) => {
+              resolve(res.rows[0].address);
+            });
+          })
+        }
+      },
+      city: {
+        type: GraphQLString,
+        resolve: () => {
+          return new Promise((resolve) => {
+            pool.query('SELECT * FROM persons', (err, res) => {
+              resolve(res.rows[0].city);
+            });
+          })
+        }
+      }
+    })
+  })
+})
 
 const app = express();
 app.use('/graphql', graphqlHTTP({
   schema: schema,
-  rootValue: root,
   graphiql: true,
 }));
 app.listen(4000);

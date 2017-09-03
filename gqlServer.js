@@ -12,7 +12,16 @@ const schema = buildSchema(`
 // The root provides a resolver function for each API endpoint
 const root = {
   hello: () => {
-    return 'Hello world!';
+    return pool.query('SELECT * FROM persons', (err, res) => {
+      console.log(res.rows[0])
+      return {
+        personid: res.rows[0].id,
+        lastname: res.rows[0].lastname,
+        firstname: res.rows[0].firstname,
+        address: res.rows[0].address,
+        city: res.rows[0].city
+      };
+    });
   },
 };
 
