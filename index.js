@@ -109,11 +109,14 @@ const schema = new GraphQLSchema({
 })
 
 const app = express();
+app.set('port', (process.env.PORT || 4000));
 app.use('/graphql', graphqlHTTP({
   schema: schema,
   graphiql: false,
 }));
-app.listen(4000);
+app.listen(app.get('port'), function() {
+  console.log("Running on localhost:" + app.get('port')); 
+});
 
 //EXPRESS BEGINS
 /*
