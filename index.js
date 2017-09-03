@@ -1,4 +1,5 @@
 import express from 'express';
+import events from 'events';
 import cors from 'cors';
 import { Pool, Client } from 'pg';
 import graphqlHTTP from 'express-graphql';
@@ -24,13 +25,13 @@ const pool = new Pool(connectParams);
 
 const client = new Client(connectParams);
 
-client.connect()
+//client.connect()
 
 //const text = 'INSERT INTO persons(personid, lastname, firstname, address, city) VALUES($1, $2, $3, $4, $5) RETURNING *';
 //const values = ['5', 'Chen', 'Howard', '123 Main St', 'Anywhere'];
 
 //client.query(text, values, (err, res) => {
-  client.end();
+  //client.end();
 //});
 
 pool.query('SELECT * FROM persons', (err, res) => {
@@ -38,11 +39,44 @@ pool.query('SELECT * FROM persons', (err, res) => {
 });
 
 let personData = {};
-const getPersonData = () => {
+let dataLoad = new events.EventEmitter();
+let dataNodes = 0;
+
+const setPersonData = (set, key) => {
+  dataNodes--;
+  personData = Object.assign({}, personData, set);
+  console.log('personData: ', personData);
+  dataLoad.emit('loaded');
+  return set[key];
+}
+
+const getPersonData = (prop) => {
+  dataNodes--;
+  console.log('count: ', dataNodes);
+  if (dataNodes === 0) {
+    personData = {};
+    dataLoad = new events.EventEmitter();
+    console.log('personData in get: ', personData);
+  }
+
+  return prop;
+}
+
+const queryPersonData = (key) => {
   return new Promise((resolve) => {
-    pool.query('SELECT * FROM persons', (err, res) => {
-      resolve(res.rows[0].personid);
-    });
+    console.log('in query: ', personData);
+    if (Object.keys(personData).length) {
+      dataLoad.on('loaded', () => {
+        resolve(getPersonData(personData[key]));
+      });
+    } else {
+      console.log('queried');
+      personData.loading = true;
+      pool.query('SELECT * FROM persons', (err, res) => {
+        dataNodes = Object.keys(res.rows[0]).length;
+        resolve(setPersonData(res.rows[0], key));
+      });
+    }
   });
 }
 // Construct a schema, using GraphQL schema language
@@ -52,53 +86,23 @@ const schema = new GraphQLSchema({
     fields: () => ({
       personid: {
         type: GraphQLInt,
-        resolve: () => {
-          return new Promise((resolve) => {
-            pool.query('SELECT * FROM persons', (err, res) => {
-              resolve(res.rows[0].personid);
-            });
-          })
-        }
+        resolve: () => (queryPersonData('personid'))
       },
-      lastName: {
+      lastname: {
         type: GraphQLString,
-        resolve: () => {
-          return new Promise((resolve) => {
-            pool.query('SELECT * FROM persons', (err, res) => {
-              resolve(res.rows[0].lastname);
-            });
-          })
-        }
+        resolve: () => (queryPersonData('lastname'))
       },
       firstname: {
         type: GraphQLString,
-        resolve: () => {
-          return new Promise((resolve) => {
-            pool.query('SELECT * FROM persons', (err, res) => {
-              resolve(res.rows[0].firstname);
-            });
-          })
-        }
+        resolve: () => (queryPersonData('firstname'))
       },
       address: {
         type: GraphQLString,
-        resolve: () => {
-          return new Promise((resolve) => {
-            pool.query('SELECT * FROM persons', (err, res) => {
-              resolve(res.rows[0].address);
-            });
-          })
-        }
+        resolve: () => (queryPersonData('address'))
       },
       city: {
         type: GraphQLString,
-        resolve: () => {
-          return new Promise((resolve) => {
-            pool.query('SELECT * FROM persons', (err, res) => {
-              resolve(res.rows[0].city);
-            });
-          })
-        }
+        resolve: () => (queryPersonData('city'))
       }
     })
   })
