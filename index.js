@@ -32,21 +32,27 @@ const client = new Client(connectParams);
 
 //client.query(text, values, (err, res) => {
   //client.end();
-//});
-
-pool.query('SELECT * FROM persons', (err, res) => {
-  console.log(res.rows[0]);
-});
+//})
 
 let personData = {};
 let dataLoad = new events.EventEmitter();
 let dataNodes = 0;
+
+const resetValues = () => {
+  if (dataNodes === 0) {
+    personData = {};
+    dataLoad = new events.EventEmitter();
+  }
+}
 
 const setPersonData = (set, key) => {
   dataNodes--;
   personData = Object.assign({}, personData, set);
   console.log('personData: ', personData);
   dataLoad.emit('loaded');
+
+  resetValues();
+
   return set[key];
 }
 
@@ -54,17 +60,14 @@ const getPersonData = (prop) => {
   dataNodes--;
   console.log('count: ', dataNodes);
 
-  if (dataNodes === 0) {
-    personData = {};
-    dataLoad = new events.EventEmitter();
-    console.log('personData in get: ', personData);
-  }
+  resetValues();
 
   return prop;
 }
 
 const queryPersonData = (key) => {
   dataNodes++;
+  console.log('in query, after incrementing: ', dataNodes)
   return new Promise((resolve) => {
     console.log('in query: ', personData);
     if (Object.keys(personData).length) {
