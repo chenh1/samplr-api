@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node index.js",
-    "test": "babel-node mockFile.js"
+    "test": "babel-node mockFile.js",
+    "gqlServer": "babel-node gqlServer.js"
   },
   "engines": {
     "node": "6.11.0"
@@ -29,6 +30,8 @@
     "babel-preset-stage-1": "6.16.0",
     "cors": "2.8.4",
     "express": "4.15.4",
+    "express-graphql": "^0.6.11",
+    "graphql": "^0.11.2",
     "pg": "^7.1.2"
   },
   "babel": {
