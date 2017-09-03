@@ -111,10 +111,22 @@ const schema = new GraphQLSchema({
 const app = express();
 app.use(cors());
 app.set('port', (process.env.PORT || 4000));
+
 app.use('/graphql', graphqlHTTP({
   schema: schema,
   graphiql: false,
 }));
+
+app.get('/tracks', function(req, res) {
+  res.json([
+    {"id": 1, "divisions": 4},
+    {"id": 2, "divisions": 16},
+    {"id": 3, "divisions": 3},
+    {"id": 4, "divisions": 8},
+    {"id": 5, "divisions": 2}
+  ]);
+});
+
 app.listen(app.get('port'), function() {
   console.log("Running on localhost:" + app.get('port')); 
 });
@@ -133,16 +145,6 @@ app.get('/', function(request, response) {
 app.get('/visibleEffect', function(req, res) {
   res.json([
     {"id": 0, "counter": 0}
-  ]);
-});
-
-app.get('/tracks', function(req, res) {
-  res.json([
-    {"id": 1, "divisions": 4},
-    {"id": 2, "divisions": 16},
-    {"id": 3, "divisions": 3},
-    {"id": 4, "divisions": 8},
-    {"id": 5, "divisions": 2}
   ]);
 });
 
