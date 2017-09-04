@@ -7,6 +7,7 @@ import graphqlHTTP from 'express-graphql';
 import { execute, subscribe, buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
 import { PubSub, withFilter } from 'graphql-subscriptions';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
+import bodyParser from 'body-parser';
 
 const pubsub = new PubSub();
 const connectionString = process.env.DATABASE_URL || '';
@@ -151,7 +152,9 @@ const schema = new GraphQLSchema({
     fields: () => ({
       startPlay: {
         type: GraphQLBoolean,
-        resolve: () => (updateData('true'))
+        resolve: () => (updateData('true').then(
+          res => pubsub.publish('startPlayTriggered', {startPlayTriggered: res})
+        ))
       },
       stopPlay: {
         type: GraphQLBoolean,
@@ -163,9 +166,12 @@ const schema = new GraphQLSchema({
   subscription: new GraphQLObjectType({
     name: 'Subscription',
     fields: () => ({
-      startPlay: {
+      startPlayTriggered: {
         type: GraphQLBoolean,
-        resolve: () => pubsub.asyncIterator('subbed play started')
+        resolve: () => {
+          console.log('subbed play started');
+          return pubsub.asyncIterator('startPlayTriggered');
+        }
       }
     })
   })
