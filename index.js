@@ -187,12 +187,12 @@ new SubscriptionServer({schema, execute, subscribe}, {server, path: '/subscripti
 
 app.post('/graphql', graphqlHTTP({
   schema: schema,
-  graphiql: true,
+  graphiql: false,
 }));
 
 app.get('/graphql', graphqlHTTP({
   schema: schema,
-  graphiql: true,
+  graphiql: false,
 }));
 
 server.listen(app.get('port'), () => {
