@@ -174,8 +174,10 @@ const schema = new GraphQLSchema({
 const app = express();
 app.use(cors());
 app.set('port', (process.env.PORT || 4000));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 const server = createServer(app);
-new SubscriptionServer({schema, execute, subscribe})
+new SubscriptionServer({schema, execute, subscribe}, {server, path: '/subscriptions'});
 
 app.post('/graphql', graphqlHTTP({
   schema: schema,
@@ -187,6 +189,6 @@ app.get('/graphql', graphqlHTTP({
   graphiql: true,
 }));
 
-app.listen(app.get('port'), function() {
+server.listen(app.get('port'), () => {
   console.log("Running on localhost:" + app.get('port')); 
 });
