@@ -4,7 +4,7 @@ import events from 'events';
 import cors from 'cors';
 import { Pool, Client } from 'pg';
 import graphqlHTTP from 'express-graphql';
-import { buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
+import { execute, subscribe, buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
 import { PubSub, withFilter } from 'graphql-subscriptions';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 
@@ -175,6 +175,7 @@ const app = express();
 app.use(cors());
 app.set('port', (process.env.PORT || 4000));
 const server = createServer(app);
+new SubscriptionServer({schema, execute, subscribe})
 
 app.post('/graphql', graphqlHTTP({
   schema: schema,
