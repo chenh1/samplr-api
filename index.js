@@ -1,12 +1,15 @@
+import { createServer } from 'http';
 import express from 'express';
 import events from 'events';
 import cors from 'cors';
 import { Pool, Client } from 'pg';
 import graphqlHTTP from 'express-graphql';
 import { buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
+import { PubSub, withFilter } from 'graphql-subscriptions';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
 
-//POSTGRES BEGINS
-const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/';
+const pubsub = new PubSub();
+const connectionString = process.env.DATABASE_URL || '';
 const connectParams = connectionString === process.env.DATABASE_URL ?
   {
     connectionString: connectionString,
@@ -94,6 +97,7 @@ const updateData = (isPlay) => {
     })
   })
 }
+
 // Construct a schema, using GraphQL schema language
 const schema = new GraphQLSchema({
   query: new GraphQLObjectType({
@@ -154,12 +158,23 @@ const schema = new GraphQLSchema({
         resolve: () => (updateData('false'))
       }
     })
+  }),
+
+  subscription: new GraphQLObjectType({
+    name: 'Subscription',
+    fields: () => ({
+      startPlay: {
+        type: GraphQLBoolean,
+        resolve: () => pubsub.asyncIterator('subbed play started')
+      }
+    })
   })
 })
 
 const app = express();
 app.use(cors());
 app.set('port', (process.env.PORT || 4000));
+const server = createServer(app);
 
 app.post('/graphql', graphqlHTTP({
   schema: schema,
@@ -174,35 +189,3 @@ app.get('/graphql', graphqlHTTP({
 app.listen(app.get('port'), function() {
   console.log("Running on localhost:" + app.get('port')); 
 });
-
-
-/*
-const app = express();
-app.use(cors());
-
-app.set('port', (process.env.PORT || 8000));
-
-app.get('/', function(request, response) {
-  response.send('Initialized')
-});
-
-app.get('/visibleEffect', function(req, res) {
-  res.json([
-    {"id": 0, "counter": 0}
-  ]);
-});
-
-app.get('/tracks', function(req, res) {
-  res.json([
-    {"id": 1, "divisions": 4},
-    {"id": 2, "divisions": 16},
-    {"id": 3, "divisions": 3},
-    {"id": 4, "divisions": 8},
-    {"id": 5, "divisions": 2}
-  ]);
-});
-
-app.listen(app.get('port'), function() {
-  console.log("Running on localhost:" + app.get('port')); 
-});
-*/
