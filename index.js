@@ -158,7 +158,9 @@ const schema = new GraphQLSchema({
       },
       stopPlay: {
         type: GraphQLBoolean,
-        resolve: () => (updateData('false'))
+        resolve: () => (updateData('false').then(
+          res => pubsub.publish('stopTriggered', {stopTriggered: res})
+        ))
       }
     })
   }),
@@ -171,6 +173,13 @@ const schema = new GraphQLSchema({
         resolve: () => {
           console.log('subbed play started');
           return pubsub.asyncIterator('startPlayTriggered');
+        }
+      },
+      stopTriggered: {
+        type: GraphQLBoolean,
+        resolve: () => {
+          console.log('subbed stop');
+          return pubsub.asyncIterator('stopTriggered');
         }
       }
     })
