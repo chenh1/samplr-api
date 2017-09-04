@@ -170,17 +170,21 @@ const schema = new GraphQLSchema({
     fields: () => ({
       startPlayTriggered: {
         type: GraphQLBoolean,
-        resolve: () => {
-          console.log('subbed play started');
-          return pubsub.asyncIterator('startPlayTriggered');
-        }
+        resolve: (payload) => {
+          return {
+            data: payload
+          }
+        },
+        subscribe: () => pubsub.asyncIterator('startPlayTriggered')
       },
       stopTriggered: {
         type: GraphQLBoolean,
-        resolve: () => {
-          console.log('subbed stop');
-          return pubsub.asyncIterator('stopTriggered');
-        }
+        resolve: (payload) => {
+          return {
+            data: payload
+          }
+        },
+        subscribe: () => pubsub.asyncIterator('stopTriggered')
       }
     })
   })
@@ -192,7 +196,6 @@ app.set('port', (process.env.PORT || 4000));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 const server = createServer(app);
-new SubscriptionServer({schema, execute, subscribe}, {server, path: '/subscriptions'});
 
 app.post('/graphql', graphqlHTTP({
   schema: schema,
@@ -205,5 +208,6 @@ app.get('/graphql', graphqlHTTP({
 }));
 
 server.listen(app.get('port'), () => {
+  new SubscriptionServer({schema, execute, subscribe}, {server, path: '/subscriptions'});
   console.log("Running on localhost:" + app.get('port')); 
 });
