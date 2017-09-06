@@ -8,25 +8,6 @@ import { mutation, query, subscription } from './schema';
 import bodyParser from 'body-parser';
 import schema from './schema';
 
-const connectionString = process.env.DATABASE_URL || '';
-const connectParams = connectionString === process.env.DATABASE_URL ?
-  {
-    connectionString: connectionString,
-    ssl: true
-  }
-  :
-  {
-    user: 'postgres',
-    host: 'localhost',
-    database: 'myDb',
-    password: 'postgres',
-    port: 5432
-  };
-
-const pool = new Pool(connectParams);
-
-const client = new Client(connectParams);
-
 //client.connect()
 
 //const text = 'INSERT INTO persons(personid, lastname, firstname, address, city) VALUES($1, $2, $3, $4, $5) RETURNING *';

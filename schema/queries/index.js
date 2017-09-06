@@ -1,4 +1,5 @@
 import { GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
+import { pool } from '../../server';
 import events from 'events';
 
 let personData = {};
