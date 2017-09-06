@@ -1,7 +1,6 @@
 import { createServer } from 'http';
 import express from 'express';
 import cors from 'cors';
-import { Pool, Client } from 'pg';
 import graphqlHTTP from 'express-graphql';
 import { execute, subscribe, buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
