@@ -1,6 +1,5 @@
 import { createServer } from 'http';
 import express from 'express';
-import events from 'events';
 import cors from 'cors';
 import { Pool, Client } from 'pg';
 import graphqlHTTP from 'express-graphql';
