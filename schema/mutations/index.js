@@ -11,21 +11,21 @@ const updateData = (isPlay) => {
 };
 
 const mutation = new GraphQLObjectType({
-    name: 'Mutation',
-    fields: () => ({
-      startPlay: {
-        type: GraphQLBoolean,
-        resolve: () => (updateData('true').then(
-          res => pubsub.publish('startPlayTriggered', {startPlayTriggered: res})
-        ))
-      },
-      stopPlay: {
-        type: GraphQLBoolean,
-        resolve: () => (updateData('false').then(
-          res => pubsub.publish('stopTriggered', {stopTriggered: res})
-        ))
-      }
-    })
-  });
+  name: 'Mutation',
+  fields: () => ({
+    startPlay: {
+      type: GraphQLBoolean,
+      resolve: () => (updateData('true').then(
+        res => pubsub.publish('startPlayTriggered', {startPlayTriggered: res})
+      ))
+    },
+    stopPlay: {
+      type: GraphQLBoolean,
+      resolve: () => (updateData('false').then(
+        res => pubsub.publish('stopTriggered', {stopTriggered: res})
+      ))
+    }
+  })
+});
 
-  export default mutation;
+export default mutation;

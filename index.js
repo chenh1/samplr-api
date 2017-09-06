@@ -2,20 +2,10 @@ import { createServer } from 'http';
 import express from 'express';
 import cors from 'cors';
 import graphqlHTTP from 'express-graphql';
-import { execute, subscribe, buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
+import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
-import { mutation, query, subscription } from './schema';
 import bodyParser from 'body-parser';
 import schema from './schema';
-
-//client.connect()
-
-//const text = 'INSERT INTO persons(personid, lastname, firstname, address, city) VALUES($1, $2, $3, $4, $5) RETURNING *';
-//const values = ['5', 'Chen', 'Howard', '123 Main St', 'Anywhere'];
-
-//client.query(text, values, (err, res) => {
-  //client.end();
-//})
 
 const app = express();
 app.use(cors());
