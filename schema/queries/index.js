@@ -1,3 +1,5 @@
+import { GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
+
 let personData = {};
 let dataLoad = new events.EventEmitter();
 let dataNodes = 0;

@@ -5,13 +5,11 @@ import cors from 'cors';
 import { Pool, Client } from 'pg';
 import graphqlHTTP from 'express-graphql';
 import { execute, subscribe, buildSchema, GraphQLObjectType, GraphQLSchema, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
-import { PubSub, withFilter } from 'graphql-subscriptions';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { mutation, query, subscription } from './schema';
 import bodyParser from 'body-parser';
 import schema from './schema';
 
-const pubsub = new PubSub();
 const connectionString = process.env.DATABASE_URL || '';
 const connectParams = connectionString === process.env.DATABASE_URL ?
   {
