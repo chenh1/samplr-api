@@ -5,7 +5,7 @@ import graphqlHTTP from 'express-graphql';
 import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import bodyParser from 'body-parser';
-import schema from './schema';
+import { schema } from './schema';
 
 const app = express();
 app.use(cors());

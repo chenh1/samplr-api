@@ -1,5 +1,6 @@
 import { GraphQLObjectType, GraphQLBoolean } from 'graphql';
 import { pool } from '../../server';
+import { pubsub } from '../index';
 
 const updateData = (isPlay) => {
   return new Promise((resolve) => {

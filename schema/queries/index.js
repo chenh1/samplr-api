@@ -2,21 +2,20 @@ import { GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLBoolean } from 'gr
 import { pool } from '../../server';
 import events from 'events';
 
-let personData = {};
+let dataBlock = {};
 let dataLoad = new events.EventEmitter();
 let dataNodes = 0;
 
 const resetValues = () => {
   if (dataNodes === 0) {
-    personData = {};
+    dataBlock = {};
     dataLoad = new events.EventEmitter();
   }
 }
 
-const setPersonData = (set, key) => {
+const setData = (set, key) => {
   dataNodes--;
-  personData = Object.assign({}, personData, set);
-  console.log('personData: ', personData);
+  dataBlock = Object.assign({}, dataBlock, set);
   dataLoad.emit('loaded');
 
   resetValues();
@@ -24,7 +23,7 @@ const setPersonData = (set, key) => {
   return set[key];
 }
 
-const getPersonData = (prop) => {
+const getData = (prop) => {
   dataNodes--;
 
   resetValues();
@@ -36,14 +35,14 @@ const queryData = (key, table) => {
   dataNodes++;
 
   return new Promise((resolve) => {
-    if (Object.keys(personData).length) {
+    if (Object.keys(dataBlock).length) {
       dataLoad.on('loaded', () => {
-        resolve(getPersonData(personData[key]));
+        resolve(getData(dataBlock[key]));
       });
     } else {
-      personData.loading = true;
+      dataBlock.loading = true;
       pool.query('SELECT * FROM ' + table, (err, res) => {
-        resolve(setPersonData(res.rows[0], key));
+        resolve(setData(res.rows[0], key));
       });
     }
   });
@@ -52,26 +51,6 @@ const queryData = (key, table) => {
 const query = new GraphQLObjectType({
     name: 'Query',
     fields: () => ({
-      personid: {
-        type: GraphQLInt,
-        resolve: () => (queryData('personid', 'persons'))
-      },
-      lastname: {
-        type: GraphQLString,
-        resolve: () => (queryData('lastname', 'persons'))
-      },
-      firstname: {
-        type: GraphQLString,
-        resolve: () => (queryData('firstname', 'persons'))
-      },
-      address: {
-        type: GraphQLString,
-        resolve: () => (queryData('address', 'persons'))
-      },
-      city: {
-        type: GraphQLString,
-        resolve: () => (queryData('city', 'persons'))
-      },
       sessionid: {
         type: GraphQLInt,
         resolve: () => (queryData('id', 'sessions'))

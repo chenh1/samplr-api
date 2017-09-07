@@ -1,12 +1,13 @@
 import { GraphQLSchema } from 'graphql';
 import mutation from './mutations';
-import query from './queries';
 import subscription from './subscriptions';
+import query from './queries';
+import { PubSub } from 'graphql-subscriptions';
 
-const schema = new GraphQLSchema({
+export const pubsub = new PubSub();
+
+export const schema = new GraphQLSchema({
   query,
   mutation,
   subscription
 });
-
-export default schema;

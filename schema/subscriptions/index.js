@@ -1,7 +1,5 @@
 import { GraphQLObjectType, GraphQLBoolean } from 'graphql';
-import { PubSub } from 'graphql-subscriptions';
-
-const pubsub = new PubSub();
+import { pubsub } from '../index';
 
 const subscription = new GraphQLObjectType({
     name: 'Subscription',
