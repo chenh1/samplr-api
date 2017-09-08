@@ -21,6 +21,15 @@ const subscription = new GraphQLObjectType({
           }
         },
         subscribe: () => pubsub.asyncIterator('stopTriggered')
+      },
+      audioFileUploaded: {
+        type: GraphQLBoolean,
+        resolve: (payload) => {
+          return {
+            data: payload
+          }
+        },
+        subscribe: () => pubsub.asyncIterator('audioFileUploaded')
       }
     })
 });
