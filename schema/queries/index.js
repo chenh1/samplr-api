@@ -82,7 +82,7 @@ const query = new GraphQLObjectType({
       },
       getfile: {
         type: GraphQLBoolean,
-        resolve: () => (queryFile())
+        resolve: () => (queryFile().then(res => res))
       }
     })
 });
