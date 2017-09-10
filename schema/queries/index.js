@@ -48,6 +48,15 @@ const queryData = (key, table) => {
   });
 };
 
+const queryFile = () => {
+    return new Promise((resolve) => {
+        pool.query('SELECT * FROM audiofiles', (err, res) => {
+            console.log(res);
+            resolve(res.rows[4]);
+        })
+    })
+}
+
 const query = new GraphQLObjectType({
     name: 'Query',
     fields: () => ({
@@ -70,6 +79,10 @@ const query = new GraphQLObjectType({
       livenode: {
         type: GraphQLInt,
         resolve: () => (queryData('livenode', 'sessions'))
+      },
+      getfile: {
+        type: GraphQLBoolean,
+        resolve: () => (queryFile())
       }
     })
 });

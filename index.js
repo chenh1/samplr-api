@@ -6,18 +6,30 @@ import { execute, subscribe } from 'graphql';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import bodyParser from 'body-parser';
 import { schema } from './schema';
+import multer from 'multer';
 
 const app = express();
+const storage = multer.memoryStorage();
+
 app.use(cors());
 app.set('port', (process.env.PORT || 4000));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use('/graphql', multer({ storage }).any());
+
 const server = createServer(app);
 
-app.post('/graphql', graphqlHTTP({
-  schema: schema,
-  graphiql: false,
-}));
+app.post('/graphql', graphqlHTTP(
+  (req, res) => {
+    console.log('******************REQ****************** ', req.files)
+    return {
+      schema: schema, 
+      graphiql: false,
+      rootValue: req,
+      context: req
+    }
+  }
+));
 
 app.get('/graphql', graphqlHTTP({
   schema: schema,
