@@ -51,11 +51,19 @@ const queryData = (key, table) => {
 const queryFile = () => {
     return new Promise((resolve) => {
         pool.query('SELECT * FROM audiofiles', (err, res) => {
-            console.log(res);
-            resolve(res.rows[4]);
+            console.log('RES!!!', res.rows[4]);
+            resolve({clip: res.rows[4].clip, id: res.rows[4].id});
         })
     })
 }
+
+const DownloadedFileType = new GraphQLObjectType({
+    name: 'DownloadedFile',
+    fields: {
+        clip: { type: GraphQLString },
+        id: { type: GraphQLInt }
+    }
+});
 
 const query = new GraphQLObjectType({
     name: 'Query',
@@ -81,8 +89,13 @@ const query = new GraphQLObjectType({
         resolve: () => (queryData('livenode', 'sessions'))
       },
       getfile: {
-        type: GraphQLBoolean,
-        resolve: () => (queryFile().then(res => res))
+        type: DownloadedFileType,
+        resolve: () => (queryFile().then(res => {
+          console.log('IN RESOLVER:', res);
+          res.clip = res.clip.toString('base64');
+          console.log(res);
+          return res
+        }))
       }
     })
 });
