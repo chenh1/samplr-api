@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLBoolean } from 'graphql';
+import { GraphQLObjectType, GraphQLBoolean, GraphQLString } from 'graphql';
 import { pubsub } from '../index';
 
 const subscription = new GraphQLObjectType({
@@ -16,6 +16,7 @@ const subscription = new GraphQLObjectType({
       stopTriggered: {
         type: GraphQLBoolean,
         resolve: (payload) => {
+          console.log('in sub for stop ', payload);
           return {
             data: payload
           }
@@ -23,8 +24,9 @@ const subscription = new GraphQLObjectType({
         subscribe: () => pubsub.asyncIterator('stopTriggered')
       },
       audioFileUploaded: {
-        type: GraphQLBoolean,
+        type: GraphQLString,
         resolve: (payload) => {
+          console.log('in sub for audio file ', payload);
           return {
             data: payload
           }
