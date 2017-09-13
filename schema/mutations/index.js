@@ -13,9 +13,16 @@ const updateData = (isPlay, testParam) => {
 };
 
 const uploadToDB = (file) => {
-    console.log('IN UPLOAD: ', file)
     return new Promise((resolve) => {
         pool.query(`INSERT INTO audiofiles(clip, trackid) VALUES ($1, $2)`, [file, 1], (err, res) => {
+            resolve(res);
+        })
+    })
+}
+
+const createTrackToDB = (sessionid) => {
+    return new Promise((resolve) => {
+        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1)`, [1], (err, res) => {
             resolve(res);
         })
     })
@@ -51,6 +58,14 @@ const mutation = new GraphQLObjectType({
 
                 return uploadToDB(encoded).then(
                 res => pubsub.publish('audioFileUploaded', {audioFileUploaded: res}))
+            }
+        },
+        createTrack: {
+            type: '',
+            resolve: (rootValue) => {
+                return createTrackToDB().then(
+                    res => pubsub.publish()
+                )
             }
         }
     })
