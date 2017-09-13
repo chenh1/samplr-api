@@ -49,55 +49,57 @@ const queryData = (key, table) => {
 };
 
 const queryFile = () => {
-    return new Promise((resolve) => {
-        pool.query('SELECT * FROM audiofiles', (err, res) => {
-            console.log('RES!!!', res.rows[4]);
-            resolve({clip: res.rows[4].clip, id: res.rows[4].id});
-        })
+  return new Promise((resolve) => {
+    pool.query('SELECT * FROM audiofiles', (err, res) => {
+      let binary = res.rows[11].clip.toString('binary');
+      //let buffer = Buffer.from(binary, 'base64');
+      //console.log('RES!!!, decoded!!: ', buffer);
+      resolve({clip: binary, id: res.rows[11].id});
     })
+  })
 }
 
 const DownloadedFileType = new GraphQLObjectType({
     name: 'DownloadedFile',
     fields: {
-        clip: { type: GraphQLString },
-        id: { type: GraphQLInt }
+      clip: { type: GraphQLString },
+      id: { type: GraphQLInt }
     }
 });
 
 const query = new GraphQLObjectType({
-    name: 'Query',
-    fields: () => ({
-      sessionid: {
-        type: GraphQLInt,
-        resolve: () => (queryData('id', 'sessions'))
-      },
-      play: {
-        type: GraphQLBoolean,
-        resolve: () => (queryData('play', 'sessions'))
-      },
-      recording: {
-        type: GraphQLBoolean,
-        resolve: () => (queryData('recording', 'sessions'))
-      },
-      tempo: {
-        type: GraphQLInt,
-        resolve: () => (queryData('tempo', 'sessions'))
-      },
-      livenode: {
-        type: GraphQLInt,
-        resolve: () => (queryData('livenode', 'sessions'))
-      },
-      getfile: {
-        type: DownloadedFileType,
-        resolve: () => (queryFile().then(res => {
-          console.log('IN RESOLVER:', res);
-          res.clip = res.clip.toString('base64');
-          console.log(res);
-          return res
-        }))
-      }
-    })
+  name: 'Query',
+  fields: () => ({
+    sessionid: {
+      type: GraphQLInt,
+      resolve: () => (queryData('id', 'sessions'))
+    },
+    play: {
+      type: GraphQLBoolean,
+      resolve: () => (queryData('play', 'sessions'))
+    },
+    recording: {
+      type: GraphQLBoolean,
+      resolve: () => (queryData('recording', 'sessions'))
+    },
+    tempo: {
+      type: GraphQLInt,
+      resolve: () => (queryData('tempo', 'sessions'))
+    },
+    livenode: {
+      type: GraphQLInt,
+      resolve: () => (queryData('livenode', 'sessions'))
+    },
+    getfile: {
+      type: DownloadedFileType,
+      resolve: () => (queryFile().then(res => {
+        console.log('IN RESOLVER:', res);
+        //res.clip = res.clip.toString('base64');
+        console.log(res);
+        return res
+      }))
+    }
+  })
 });
 
 export default query;
