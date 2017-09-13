@@ -21,7 +21,6 @@ const server = createServer(app);
 
 app.post('/graphql', graphqlHTTP(
   (req, res) => {
-    console.log('******************REQ****************** ', req.files)
     return {
       schema: schema, 
       graphiql: false,

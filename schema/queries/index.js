@@ -52,8 +52,6 @@ const queryFile = () => {
   return new Promise((resolve) => {
     pool.query('SELECT * FROM audiofiles', (err, res) => {
       let binary = res.rows[11].clip.toString('binary');
-      //let buffer = Buffer.from(binary, 'base64');
-      //console.log('RES!!!, decoded!!: ', buffer);
       resolve({clip: binary, id: res.rows[11].id});
     })
   })
@@ -93,9 +91,6 @@ const query = new GraphQLObjectType({
     getfile: {
       type: DownloadedFileType,
       resolve: () => (queryFile().then(res => {
-        console.log('IN RESOLVER:', res);
-        //res.clip = res.clip.toString('base64');
-        console.log(res);
         return res
       }))
     }
