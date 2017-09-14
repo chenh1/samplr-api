@@ -74,7 +74,7 @@ const mutation = new GraphQLObjectType({
             },
             resolve: (rootValue) => {
                 return createTrackToDB().then(
-                    res => pubsub.publish()
+                    res => pubsub.publish('trackCreated', {trackCreated: res})
                 )
             }
         }

@@ -32,6 +32,15 @@ const subscription = new GraphQLObjectType({
           }
         },
         subscribe: () => pubsub.asyncIterator('audioFileUploaded')
+      },
+      trackCreated: {
+        type: GraphQLString,
+        resolve: (payload) => {
+          return {
+            data: payload
+          }
+        },
+        subscribe: () => pubsub.asyncIterator('trackCreated')
       }
     })
 });
