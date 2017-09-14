@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
+import { GraphQLObjectType, GraphQLList, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
 import { pool } from '../../server';
 import events from 'events';
 
@@ -57,6 +57,15 @@ const queryFile = () => {
   })
 }
 
+const queryTracks = () => {
+  return new Promise((resolve) => {
+    pool.query('SELECT * FROM tracks', (err, res) => {
+      console.log('TRACKS: ', res);
+      resolve(res.rows);
+    })
+  })
+}
+
 const DownloadedFileType = new GraphQLObjectType({
     name: 'DownloadedFile',
     fields: {
@@ -64,6 +73,14 @@ const DownloadedFileType = new GraphQLObjectType({
       id: { type: GraphQLInt }
     }
 });
+
+const TrackType = new GraphQLObjectType({
+  name: 'Track',
+  fields: {
+    id: { type: GraphQLInt },
+    sessionid: { type: GraphQLInt }
+  }
+})
 
 const query = new GraphQLObjectType({
   name: 'Query',
@@ -93,6 +110,10 @@ const query = new GraphQLObjectType({
       resolve: () => (queryFile().then(res => {
         return res
       }))
+    },
+    getTracks: {
+      type: new GraphQLList(TrackType),
+      resolve: () => (queryTracks().then(res=>res))
     }
   })
 });
