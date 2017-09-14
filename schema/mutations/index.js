@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQL } from 'graphql';
+import { GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQLInt } from 'graphql';
 import { pool } from '../../server';
 import { pubsub } from '../index';
 
@@ -36,6 +36,13 @@ const UploadedFileType = new GraphQLObjectType({
     }
 });
 
+const CreateTrackType = new GraphQLObjectType({
+    name: 'CreateTrack',
+    fields: {
+        id: { type: GraphQLInt }
+    }
+})
+
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: () => ({
@@ -61,7 +68,10 @@ const mutation = new GraphQLObjectType({
             }
         },
         createTrack: {
-            type: '',
+            type: CreateTrackType,
+            args: {
+                sessionid: { type: GraphQLInt }
+            },
             resolve: (rootValue) => {
                 return createTrackToDB().then(
                     res => pubsub.publish()

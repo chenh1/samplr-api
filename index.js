@@ -23,7 +23,7 @@ app.post('/graphql', graphqlHTTP(
   (req, res) => {
     return {
       schema: schema, 
-      graphiql: false,
+      graphiql: true,
       rootValue: req,
       context: req
     }
@@ -32,7 +32,7 @@ app.post('/graphql', graphqlHTTP(
 
 app.get('/graphql', graphqlHTTP({
   schema: schema,
-  graphiql: false,
+  graphiql: true,
 }));
 
 server.listen(app.get('port'), () => {
