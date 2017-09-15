@@ -20,9 +20,9 @@ const uploadToDB = (file) => {
     })
 }
 
-const createTrackToDB = (sessionid) => {
+const createTrackToDB = (trackid) => {
     return new Promise((resolve) => {
-        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1)`, [1], (err, res) => {
+        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1)`, [trackid], (err, res) => {
             resolve(res);
         })
     })
@@ -60,6 +60,9 @@ const mutation = new GraphQLObjectType({
         },
         uploadAudioFile: {
             type: UploadedFileType,
+            args: {
+                trackid: {type: GraphQLInt }
+            },
             resolve: (rootValue) => {
                 let encoded = rootValue.files[0].buffer.toString('base64');
 
