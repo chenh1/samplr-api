@@ -69,7 +69,7 @@ const mutation = new GraphQLObjectType({
         uploadAudioFile: {
             type: UploadedFileType,
             args: {
-                trackid: {type: GraphQLInt }
+                trackid: { type: GraphQLInt }
             },
             resolve: (rootValue, args) => {
                 let encoded = rootValue.files[0].buffer.toString('base64');
@@ -86,6 +86,17 @@ const mutation = new GraphQLObjectType({
             resolve: (rootValue, args) => {
                 return createTrackToDB().then(
                     res => pubsub.publish('trackCreated', {trackCreated: res})
+                )
+            }
+        },
+        deleteTrack: {
+            type: GraphQLBoolean,
+            args: {
+                trackid: { type: GraphQLInt }
+            },
+            resolve: (args) => {
+                return deleteTrackFromDB(args.trackid).then(
+                    res => pubsub.publish('trackDeleted', {trackDeleted: res})
                 )
             }
         }
