@@ -14,9 +14,8 @@ const updateData = (isPlay, testParam) => {
 const uploadToDB = (file, trackId) => {
     return new Promise((resolve) => {
         pool.query(`SELECT * FROM audiofiles WHERE trackid = $1`, [trackId], (err, res) => {
-            console.log(res);
             if (res.rows.length > 0) {
-                pool.query(`UPDATE audiofiles SET clip = $1 WHERE trackid = $2`, [file, trackId], (err, res) => {
+                pool.query(`UPDATE audiofiles SET clip=$1 WHERE trackid=$2`, [file, trackId], (err, res) => {
                     resolve(res);
                 })
             } else {
@@ -28,9 +27,18 @@ const uploadToDB = (file, trackId) => {
     })
 }
 
-const createTrackToDB = (sessionid) => {
+const createTrackToDB = (sessionId) => {
     return new Promise((resolve) => {
         pool.query(`INSERT INTO tracks(sessionid) VALUES ($1)`, [1], (err, res) => {
+            resolve(res);
+        })
+    })
+};
+
+//DELETE FROM tracks WHERE trackid = $1, [trackId]
+const deleteTrackFromDB = (trackId) => {
+    return new Promise((resolve) => {
+        pool.query(`UPDATE tracks SET deleted=true WHERE trackid=$1`, [trackId], (err, res) => {
             resolve(res);
         })
     })
