@@ -6,23 +6,22 @@ const updateData = (isPlay, testParam) => {
     console.log('stopped request: ', testParam);
     return new Promise((resolve) => {
         pool.query('UPDATE sessions SET play = '+ isPlay +' WHERE id = 1', (err, res) => {
-            console.log('updated', res);
             resolve(res);
         })
     })
 };
 
-const uploadToDB = (file) => {
+const uploadToDB = (file, trackId) => {
     return new Promise((resolve) => {
-        pool.query(`INSERT INTO audiofiles(clip, trackid) VALUES ($1, $2)`, [file, 1], (err, res) => {
+        pool.query(`INSERT INTO audiofiles(clip, trackid) VALUES ($1, $2)`, [file, trackId], (err, res) => {
             resolve(res);
         })
     })
 }
 
-const createTrackToDB = (trackid) => {
+const createTrackToDB = (sessionid) => {
     return new Promise((resolve) => {
-        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1)`, [trackid], (err, res) => {
+        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1)`, [1], (err, res) => {
             resolve(res);
         })
     })
@@ -63,10 +62,10 @@ const mutation = new GraphQLObjectType({
             args: {
                 trackid: {type: GraphQLInt }
             },
-            resolve: (rootValue) => {
+            resolve: (rootValue, args) => {
                 let encoded = rootValue.files[0].buffer.toString('base64');
 
-                return uploadToDB(encoded).then(
+                return uploadToDB(encoded, args.trackid).then(
                 res => pubsub.publish('audioFileUploaded', {audioFileUploaded: res}))
             }
         },
@@ -75,7 +74,7 @@ const mutation = new GraphQLObjectType({
             args: {
                 sessionid: { type: GraphQLInt }
             },
-            resolve: (rootValue) => {
+            resolve: (rootValue, args) => {
                 return createTrackToDB().then(
                     res => pubsub.publish('trackCreated', {trackCreated: res})
                 )
