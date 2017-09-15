@@ -58,6 +58,7 @@ const queryFile = () => {
 }
 
 const queryTracks = (sessionId) => {
+  console.log(sessionId)
   return new Promise((resolve) => {
     pool.query('SELECT * FROM tracks WHERE deleted=false and sessionid=$1',[sessionId], (err, res) => {
       console.log('TRACKS: ', res);
@@ -116,7 +117,7 @@ const query = new GraphQLObjectType({
       args: {
         sessionid: { type: GraphQLInt }
       },
-      resolve: args => (queryTracks(args.sessionid).then(res=>res))
+      resolve: (rootVale, args) => (queryTracks(args.sessionid).then(res=>res))
     }
   })
 });
