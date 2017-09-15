@@ -13,8 +13,17 @@ const updateData = (isPlay, testParam) => {
 
 const uploadToDB = (file, trackId) => {
     return new Promise((resolve) => {
-        pool.query(`INSERT INTO audiofiles(clip, trackid) VALUES ($1, $2)`, [file, trackId], (err, res) => {
-            resolve(res);
+        pool.query(`SELECT * FROM audiofiles WHERE trackid = $1`, [trackId], (err, res) => {
+            console.log(res);
+            if (res.rows.length > 0) {
+                pool.query(`UPDATE audiofiles SET clip = $1 WHERE trackid = $2`, [file, trackId], (err, res) => {
+                    resolve(res);
+                })
+            } else {
+                pool.query(`INSERT INTO audiofiles(clip, trackid) VALUES ($1, $2)`, [file, trackId], (err, res) => {
+                    resolve(res);
+                })
+            }
         })
     })
 }
