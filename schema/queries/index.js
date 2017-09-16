@@ -43,19 +43,25 @@ const queryData = (key, table) => {
       dataBlock.loading = true;
       pool.query('SELECT * FROM ' + table, (err, res) => {
         resolve(setData(res.rows[0], key));
-      });
+      }).catch(err);
     }
   });
 };
 
-const queryFile = () => {
+const queryFiles = (sessionId) => {
   return new Promise((resolve) => {
-    pool.query('SELECT * FROM audiofiles', (err, res) => {
-      let binary = res.rows[11].clip.toString('binary');
-      resolve({clip: binary, id: res.rows[11].id});
-    })
-  })
-}
+    pool.query('SELECT * FROM audiofiles WHERE sessionid=$1', [sessionId], (err, res) => {
+      resolve(
+        res.rows.map((row) => {
+          return {
+            clip: row.clip.toString('binary'),
+            id: row.id
+          }
+        })
+      );
+    }).catch(err)
+  });
+};
 
 const queryTracks = (sessionId) => {
   console.log(sessionId)
@@ -111,16 +117,14 @@ const query = new GraphQLObjectType({
       args: {
         sessionid: {type: GraphQLInt}
       },
-      resolve: () => (queryFile().then(res => {
-        return res
-      }))
+      resolve: (rootValue, args) => (queryFiles(args.sessionid).then(res => res))
     },
     getTracks: {
       type: new GraphQLList(TrackType),
       args: {
         sessionid: { type: GraphQLInt }
       },
-      resolve: (rootVale, args) => (queryTracks(args.sessionid).then(res=>res))
+      resolve: (rootValue, args) => (queryTracks(args.sessionid).then(res=>res))
     }
   })
 });
