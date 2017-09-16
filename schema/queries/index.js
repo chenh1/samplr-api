@@ -43,7 +43,7 @@ const queryData = (key, table) => {
       dataBlock.loading = true;
       pool.query('SELECT * FROM ' + table, (err, res) => {
         resolve(setData(res.rows[0], key));
-      }).catch(err);
+      })
     }
   });
 };
@@ -59,7 +59,7 @@ const queryFiles = (sessionId) => {
           }
         })
       );
-    }).catch(err)
+    })
   });
 };
 
@@ -112,7 +112,7 @@ const query = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: () => (queryData('livenode', 'sessions'))
     },
-    getfile: {
+    getfiles: {
       type: new GraphQLList(DownloadedFileType),
       args: {
         sessionid: {type: GraphQLInt}
