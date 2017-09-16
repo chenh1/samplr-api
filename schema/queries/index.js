@@ -55,7 +55,8 @@ const queryFiles = (sessionId) => {
         res.rows.map((row) => {
           return {
             clip: row.clip.toString('binary'),
-            id: row.id
+            id: row.id,
+            trackid: row.trackid
           }
         })
       );
@@ -77,7 +78,8 @@ const DownloadedFileType = new GraphQLObjectType({
     name: 'DownloadedFile',
     fields: {
       clip: { type: GraphQLString },
-      id: { type: GraphQLInt }
+      id: { type: GraphQLInt },
+      trackid: { type: GraphQLInt }
     }
 });
 
