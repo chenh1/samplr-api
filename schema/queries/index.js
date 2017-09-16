@@ -107,7 +107,10 @@ const query = new GraphQLObjectType({
       resolve: () => (queryData('livenode', 'sessions'))
     },
     getfile: {
-      type: DownloadedFileType,
+      type: new GraphQLList(DownloadedFileType),
+      args: {
+        sessionid: {type: GraphQLInt}
+      },
       resolve: () => (queryFile().then(res => {
         return res
       }))
