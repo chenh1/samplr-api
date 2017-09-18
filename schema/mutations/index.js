@@ -92,11 +92,9 @@ const mutation = new GraphQLObjectType({
             args: {
                 sessionid: { type: GraphQLInt }
             },
-            resolve: (rootValue, args) => {
-                return createTrackToDB().then(
+            resolve: () => (createTrackToDB().then(
                     res => pubsub.publish('trackCreated', {trackCreated: res})
-                )
-            }
+            ))
         },
         deleteTrack: {
             type: GraphQLBoolean,
