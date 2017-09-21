@@ -29,8 +29,9 @@ const uploadToDB = (file, trackId) => {
 
 const createTrackToDB = (sessionId) => {
     return new Promise((resolve) => {
-        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1)`, [1], (err, res) => {
-            resolve(res);
+        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1) returning id`, [1], (err, res) => {
+            console.log('added track in query ', res)
+            resolve(res.rows[0]);
         })
     })
 };

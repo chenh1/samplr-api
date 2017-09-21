@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLBoolean, GraphQLString } from 'graphql';
+import { GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQLInt } from 'graphql';
 import { pubsub } from '../index';
 
 const subscription = new GraphQLObjectType({
@@ -20,8 +20,11 @@ const subscription = new GraphQLObjectType({
         subscribe: () => pubsub.asyncIterator('audioFileUploaded')
       },
       trackCreated: {
-        type: GraphQLBoolean,
-        resolve: (payload) => ({ data: payload }),
+        type: GraphQLInt,
+        resolve: (payload) => {
+          console.log('payload track added ', payload.trackCreated.id)
+          return payload.trackCreated.id
+        },
         subscribe: () => pubsub.asyncIterator('trackCreated')
       },
       trackDeleted: {

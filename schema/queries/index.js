@@ -64,13 +64,18 @@ const queryFiles = (sessionId) => {
   });
 };
 
-const queryTracks = (sessionId) => {
-  console.log(sessionId)
+const queryTracks = (sessionId, trackId) => {
+  console.log(sessionId, trackId)
   return new Promise((resolve) => {
-    pool.query('SELECT * FROM tracks WHERE deleted=false and sessionid=$1',[sessionId], (err, res) => {
-      console.log('TRACKS: ', res);
-      resolve(res.rows);
-    })
+    if (sessionId) {
+      pool.query('SELECT * FROM tracks WHERE deleted=false and sessionid=$1',[sessionId], (err, res) => {
+        resolve(res.rows);
+      })
+    } else {
+      pool.query('SELECT * FROM tracks WHERE deleted=false and id=$1',[trackId], (err, res) => {
+        resolve(res.rows);
+      })
+    }
   })
 }
 
@@ -124,9 +129,10 @@ const query = new GraphQLObjectType({
     getTracks: {
       type: new GraphQLList(TrackType),
       args: {
-        sessionid: { type: GraphQLInt }
+        sessionid: { type: GraphQLInt },
+        id: { type: GraphQLInt }
       },
-      resolve: (rootValue, args) => (queryTracks(args.sessionid).then(res=>res))
+      resolve: (rootValue, args) => (queryTracks(args.sessionid, args.id).then(res=>res))
     }
   })
 });
