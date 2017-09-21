@@ -102,11 +102,9 @@ const mutation = new GraphQLObjectType({
             args: {
                 trackid: { type: GraphQLInt }
             },
-            resolve: (rootValue, args) => {
-                return deleteTrackFromDB(args.trackid).then(
-                    res => pubsub.publish('trackDeleted', {trackDeleted: res})
-                )
-            }
+            resolve: (rootValue, args) => (deleteTrackFromDB(args.trackid).then(
+                res => pubsub.publish('trackDeleted', {trackDeleted: res})
+            ))
         }
     })
 });
