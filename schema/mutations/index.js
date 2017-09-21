@@ -40,8 +40,8 @@ const createTrackToDB = (sessionId) => {
 const deleteTrackFromDB = (trackId) => {
     console.log('DELETED TRACK: ', trackId);
     return new Promise((resolve) => {
-        pool.query(`UPDATE tracks SET deleted=true WHERE id=$1`, [trackId], (err, res) => {
-            resolve(res);
+        pool.query(`UPDATE tracks SET deleted=true WHERE id=$1 returning id`, [trackId], (err, res) => {
+            resolve(res.rows[0]);
         })
     })
 }
@@ -94,7 +94,7 @@ const mutation = new GraphQLObjectType({
                 sessionid: { type: GraphQLInt }
             },
             resolve: () => (createTrackToDB().then(
-                    res => pubsub.publish('trackCreated', {trackCreated: res})
+                res => pubsub.publish('trackCreated', {trackCreated: res})
             ))
         },
         deleteTrack: {
