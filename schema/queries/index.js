@@ -48,20 +48,28 @@ const queryData = (key, table) => {
   });
 };
 
+const returnFileList = (list) => (
+  list.rows.map((row) => {
+    return {
+      clip: row.clip.toString('binary'),
+      id: row.id,
+      trackid: row.trackid
+    }
+  })
+);
+
 //NEED SINGLE FILE RETRIEVAL
-const queryFiles = (sessionId) => {
+const queryFiles = (sessionId, trackId) => {
   return new Promise((resolve) => {
-    pool.query('SELECT * FROM audiofiles WHERE sessionid=$1', [sessionId], (err, res) => {
-      resolve(
-        res.rows.map((row) => {
-          return {
-            clip: row.clip.toString('binary'),
-            id: row.id,
-            trackid: row.trackid
-          }
-        })
-      );
-    })
+    if (sessionId) {
+      pool.query('SELECT * FROM audiofiles WHERE sessionid=$1', [sessionId], (err, res) => {
+        resolve(returnFileList(res));
+      })
+    } else {
+      pool.query('SELECT * FROM audiofiles WHERE trackid=$1', [trackId], (err, res) => {
+        resolve(returnFileList(res));
+      })
+    }
   });
 };
 
@@ -126,7 +134,7 @@ const query = new GraphQLObjectType({
         sessionid: {type: GraphQLInt },
         trackid: { type: GraphQLInt }
       },
-      resolve: (rootValue, args) => (queryFiles(args.sessionid).then(res => res))
+      resolve: (rootValue, args) => (queryFiles(args.sessionid, args.trackid).then(res => res))
     },
     getTracks: {
       type: new GraphQLList(TrackType),
