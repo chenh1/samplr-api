@@ -15,8 +15,8 @@ const subscription = new GraphQLObjectType({
         subscribe: () => pubsub.asyncIterator('stopTriggered')
       },
       audioFileUploaded: {
-        type: GraphQLString,
-        resolve: payload => ({ data: payload }),
+        type: GraphQLInt,
+        resolve: payload => payload.audioFileUploaded.id,
         subscribe: () => pubsub.asyncIterator('audioFileUploaded')
       },
       trackCreated: {

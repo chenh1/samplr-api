@@ -15,12 +15,12 @@ const uploadToDB = (file, sessionId, trackId) => {
     return new Promise((resolve) => {
         pool.query(`SELECT * FROM audiofiles WHERE trackid = $1`, [trackId], (err, res) => {
             if (res.rows.length > 0) {
-                pool.query(`UPDATE audiofiles SET clip=$1 WHERE trackid=$2`, [file, trackId], (err, res) => {
-                    resolve(res);
+                pool.query(`UPDATE audiofiles SET clip=$1 WHERE trackid=$2 returning id`, [file, trackId], (err, res) => {
+                    resolve(res.rows[0]);
                 })
             } else {
-                pool.query(`INSERT INTO audiofiles(clip, sessionid, trackid) VALUES ($1, $2, $3)`, [file, sessionId, trackId], (err, res) => {
-                    resolve(res);
+                pool.query(`INSERT INTO audiofiles(clip, sessionid, trackid) VALUES ($1, $2, $3) returning id`, [file, sessionId, trackId], (err, res) => {
+                    resolve(res.rows[0]);
                 })
             }
         })
@@ -47,6 +47,7 @@ const deleteTrackFromDB = (trackId) => {
     })
 }
 
+//DELETE THIS WHEN WE DON'T NEED IT ANYMORE
 const UploadedFileType = new GraphQLObjectType({
     name: 'UploadedFile',
     fields: {
@@ -54,6 +55,13 @@ const UploadedFileType = new GraphQLObjectType({
         mimetype: { type: GraphQLString }
     }
 });
+
+const FileType = new GraphQLObjectType({
+    name: 'FileType',
+    fields: {
+        id: { type: GraphQLInt }
+    }
+})
 
 const TrackType = new GraphQLObjectType({
     name: 'TrackType',
@@ -78,7 +86,7 @@ const mutation = new GraphQLObjectType({
             ))
         },
         uploadAudioFile: {
-            type: UploadedFileType,
+            type: FileType,
             args: {
                 sessionid: { type: GraphQLInt },
                 trackid: { type: GraphQLInt }
