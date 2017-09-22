@@ -29,7 +29,7 @@ const uploadToDB = (file, trackId) => {
 
 const createTrackToDB = (sessionId) => {
     return new Promise((resolve) => {
-        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1) returning id`, [1], (err, res) => {
+        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1) returning id`, [sessionId], (err, res) => {
             console.log('added track in query ', res)
             resolve(res.rows[0]);
         })
@@ -40,8 +40,8 @@ const createTrackToDB = (sessionId) => {
 const deleteTrackFromDB = (trackId) => {
     console.log('DELETED TRACK: ', trackId);
     return new Promise((resolve) => {
-        pool.query(`UPDATE tracks SET deleted=true WHERE id=$1 returning id`, [trackId], (err, res) => {
-            resolve(res.rows[0]);
+        pool.query(`UPDATE tracks SET deleted=true WHERE id=$1`, [trackId], (err, res) => {
+            resolve(trackId);
         })
     })
 }
@@ -54,8 +54,8 @@ const UploadedFileType = new GraphQLObjectType({
     }
 });
 
-const CreateTrackType = new GraphQLObjectType({
-    name: 'CreateTrack',
+const TrackType = new GraphQLObjectType({
+    name: 'TrackType',
     fields: {
         id: { type: GraphQLInt }
     }
@@ -89,16 +89,16 @@ const mutation = new GraphQLObjectType({
             }
         },
         createTrack: {
-            type: CreateTrackType,
+            type: TrackType,
             args: {
                 sessionid: { type: GraphQLInt }
             },
-            resolve: () => (createTrackToDB().then(
+            resolve: (rootValue, args) => (createTrackToDB(args.sessionid).then(
                 res => pubsub.publish('trackCreated', {trackCreated: res})
             ))
         },
         deleteTrack: {
-            type: GraphQLBoolean,
+            type: TrackType,
             args: {
                 trackid: { type: GraphQLInt }
             },
