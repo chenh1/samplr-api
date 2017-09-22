@@ -30,7 +30,7 @@ const uploadToDB = (file, trackId) => {
 const createTrackToDB = (sessionId) => {
     return new Promise((resolve) => {
         pool.query(`INSERT INTO tracks(sessionid) VALUES ($1) returning id`, [sessionId], (err, res) => {
-            console.log('added track in query ', res)
+            console.log('added track in query ', res.rows[0])
             resolve(res.rows[0]);
         })
     })
@@ -40,8 +40,9 @@ const createTrackToDB = (sessionId) => {
 const deleteTrackFromDB = (trackId) => {
     console.log('DELETED TRACK: ', trackId);
     return new Promise((resolve) => {
-        pool.query(`UPDATE tracks SET deleted=true WHERE id=$1`, [trackId], (err, res) => {
-            resolve(trackId);
+        pool.query(`UPDATE tracks SET deleted=true WHERE id=$1 returning id`, [trackId], (err, res) => {
+            console.log('added deleted in query ', res.rows[0])
+            resolve(res.rows[0]);
         })
     })
 }
