@@ -48,6 +48,7 @@ const queryData = (key, table) => {
   });
 };
 
+//NEED SINGLE FILE RETRIEVAL
 const queryFiles = (sessionId) => {
   return new Promise((resolve) => {
     pool.query('SELECT * FROM audiofiles WHERE sessionid=$1', [sessionId], (err, res) => {
@@ -122,7 +123,8 @@ const query = new GraphQLObjectType({
     getfiles: {
       type: new GraphQLList(DownloadedFileType),
       args: {
-        sessionid: {type: GraphQLInt}
+        sessionid: {type: GraphQLInt },
+        trackid: { type: GraphQLInt }
       },
       resolve: (rootValue, args) => (queryFiles(args.sessionid).then(res => res))
     },

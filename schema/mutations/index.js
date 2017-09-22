@@ -11,7 +11,7 @@ const updateData = (isPlay, testParam) => {
     })
 };
 
-const uploadToDB = (file, trackId) => {
+const uploadToDB = (file, sessionId, trackId) => {
     return new Promise((resolve) => {
         pool.query(`SELECT * FROM audiofiles WHERE trackid = $1`, [trackId], (err, res) => {
             if (res.rows.length > 0) {
@@ -19,7 +19,7 @@ const uploadToDB = (file, trackId) => {
                     resolve(res);
                 })
             } else {
-                pool.query(`INSERT INTO audiofiles(clip, trackid) VALUES ($1, $2)`, [file, trackId], (err, res) => {
+                pool.query(`INSERT INTO audiofiles(clip, sessionid, trackid) VALUES ($1, $2, $3)`, [file, sessionId, trackId], (err, res) => {
                     resolve(res);
                 })
             }
@@ -41,7 +41,7 @@ const deleteTrackFromDB = (trackId) => {
     console.log('DELETED TRACK: ', trackId);
     return new Promise((resolve) => {
         pool.query(`UPDATE tracks SET deleted=true WHERE id=$1 returning id`, [trackId], (err, res) => {
-            console.log('added deleted in query ', res.rows[0])
+            console.log('added track in query ', res.rows[0])
             resolve(res.rows[0]);
         })
     })
@@ -80,12 +80,13 @@ const mutation = new GraphQLObjectType({
         uploadAudioFile: {
             type: UploadedFileType,
             args: {
+                sessionid: { type: GraphQLInt },
                 trackid: { type: GraphQLInt }
             },
             resolve: (rootValue, args) => {
                 let encoded = rootValue.files[0].buffer.toString('base64');
 
-                return uploadToDB(encoded, args.trackid).then(
+                return uploadToDB(encoded, args.sessionid, args.trackid).then(
                 res => pubsub.publish('audioFileUploaded', {audioFileUploaded: res}))
             }
         },
