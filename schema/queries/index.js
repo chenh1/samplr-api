@@ -59,14 +59,14 @@ const returnFileList = (list) => (
 );
 
 //NEED SINGLE FILE RETRIEVAL
-const queryFiles = (sessionId, trackId) => {
+const queryFiles = (sessionId, id) => {
   return new Promise((resolve) => {
     if (sessionId) {
       pool.query('SELECT * FROM audiofiles WHERE sessionid=$1', [sessionId], (err, res) => {
         resolve(returnFileList(res));
       })
     } else {
-      pool.query('SELECT * FROM audiofiles WHERE trackid=$1', [trackId], (err, res) => {
+      pool.query('SELECT * FROM audiofiles WHERE id=$1', [id], (err, res) => {
         resolve(returnFileList(res));
       })
     }
