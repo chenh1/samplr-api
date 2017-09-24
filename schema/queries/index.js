@@ -128,13 +128,13 @@ const query = new GraphQLObjectType({
       type: GraphQLInt,
       resolve: () => (queryData('livenode', 'sessions'))
     },
-    getfiles: {
+    getFiles: {
       type: new GraphQLList(DownloadedFileType),
       args: {
         sessionid: {type: GraphQLInt },
-        trackid: { type: GraphQLInt }
+        id: { type: GraphQLInt }
       },
-      resolve: (rootValue, args) => (queryFiles(args.sessionid, args.trackid).then(res => res))
+      resolve: (rootValue, args) => (queryFiles(args.sessionid, args.id).then(res => res))
     },
     getTracks: {
       type: new GraphQLList(TrackType),
