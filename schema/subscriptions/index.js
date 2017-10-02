@@ -21,18 +21,12 @@ const subscription = new GraphQLObjectType({
       },
       trackCreated: {
         type: GraphQLInt,
-        resolve: payload => {
-          console.log('payload track added ', payload.trackCreated.id)
-          return payload.trackCreated.id
-        },
+        resolve: payload => payload.trackCreated.id,
         subscribe: () => pubsub.asyncIterator('trackCreated')
       },
       trackDeleted: {
         type: GraphQLInt,
-        resolve: payload => {
-          console.log('payload in track delete', payload)
-          return payload.trackDeleted.id
-        },
+        resolve: payload => payload.trackDeleted.id,
         subscribe: () => pubsub.asyncIterator('trackDeleted')
       }
     })

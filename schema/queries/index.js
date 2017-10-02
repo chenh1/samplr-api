@@ -74,7 +74,6 @@ const queryFiles = (sessionId, id) => {
 };
 
 const queryTracks = (sessionId, trackId) => {
-  console.log(sessionId, trackId)
   return new Promise((resolve) => {
     if (sessionId) {
       pool.query('SELECT * FROM tracks WHERE deleted=false and sessionid=$1',[sessionId], (err, res) => {

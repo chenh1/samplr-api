@@ -3,7 +3,6 @@ import { pool } from '../../server';
 import { pubsub } from '../index';
 
 const updateData = (isPlay, testParam) => {
-    console.log('stopped request: ', testParam);
     return new Promise((resolve) => {
         pool.query('UPDATE sessions SET play = '+ isPlay +' WHERE id = 1', (err, res) => {
             resolve(res);
@@ -30,7 +29,6 @@ const uploadToDB = (file, sessionId, trackId) => {
 const createTrackToDB = (sessionId) => {
     return new Promise((resolve) => {
         pool.query(`INSERT INTO tracks(sessionid) VALUES ($1) returning id`, [sessionId], (err, res) => {
-            console.log('added track in query ', res.rows[0])
             resolve(res.rows[0]);
         })
     })
@@ -38,10 +36,8 @@ const createTrackToDB = (sessionId) => {
 
 //DELETE FROM tracks WHERE trackid = $1, [trackId]
 const deleteTrackFromDB = (trackId) => {
-    console.log('DELETED TRACK: ', trackId);
     return new Promise((resolve) => {
         pool.query(`UPDATE tracks SET deleted=true WHERE id=$1 returning id`, [trackId], (err, res) => {
-            console.log('added track in query ', res.rows[0])
             resolve(res.rows[0]);
         })
     })
