@@ -34,7 +34,7 @@ const getData = (prop) => {
 const queryData = (key, table) => {
   dataNodes++;
 
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (Object.keys(dataBlock).length) {
       dataLoad.on('loaded', () => {
         resolve(getData(dataBlock[key]));
@@ -49,7 +49,7 @@ const queryData = (key, table) => {
 };
 
 const returnFileList = (list) => (
-  list.rows.map((row) => {
+  list.rows.map(row => {
     return {
       clip: row.clip.toString('binary'),
       id: row.id,
@@ -60,7 +60,7 @@ const returnFileList = (list) => (
 
 //NEED SINGLE FILE RETRIEVAL
 const queryFiles = (sessionId, id) => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (sessionId) {
       pool.query('SELECT * FROM audiofiles WHERE sessionid=$1', [sessionId], (err, res) => {
         resolve(returnFileList(res));
@@ -74,13 +74,27 @@ const queryFiles = (sessionId, id) => {
 };
 
 const queryTracks = (sessionId, trackId) => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     if (sessionId) {
       pool.query('SELECT * FROM tracks WHERE deleted=false and sessionid=$1',[sessionId], (err, res) => {
         resolve(res.rows);
       })
     } else {
       pool.query('SELECT * FROM tracks WHERE deleted=false and id=$1',[trackId], (err, res) => {
+        resolve(res.rows);
+      })
+    }
+  })
+};
+
+const queryEffects = (trackId, effectId) => {
+  return new Promise(resolve => {
+    if (trackId) {
+      pool.query('SELECT * FROM effects WHERE trackid=$1', [trackId], (err, res) => {
+        resolve(res.rows);
+      })
+    } else {
+      pool.query('SELECT * FROM effects WHERE id=$1', [effectId], (err, res) => {
         resolve(res.rows);
       })
     }
@@ -110,7 +124,7 @@ const EffectType = new GraphQLObjectType({
     id: { type: GraphQLInt },
     trackid: { type: GraphQLInt }
   }
-})
+});
 
 const query = new GraphQLObjectType({
   name: 'Query',
@@ -154,9 +168,8 @@ const query = new GraphQLObjectType({
     getEffects: {
       type: new GraphQLList(EffectType),
       args: {
-        sessionid: { type: GraphQLInt },
-        id: { type: GraphQLInt },
-        trackid: { type: GraphQLInt }
+        trackid: { type: GraphQLInt },
+        id: { type: GraphQLInt }
       },
       resolve: () => (null)
     }
