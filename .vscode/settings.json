@@ -1,4 +1,14 @@
 // Place your settings in this file to overwrite default and user settings.
 {
-    "workbench.colorTheme": "Solarized Dark"
+    "workbench.colorCustomizations": {
+        "activityBar.foreground": "#ffe630",
+        "terminal.foreground": "#c6b51d",
+        "activityBar.background": "#161402",
+        "sideBar.background": "#161402",
+        "titleBar.activeBackground": "#161402",
+        "tab.inactiveBackground": "#141202",
+        "editor.background": "#0a0901",
+        "input.background": "#2d2909"
+    },
+    "workbench.colorTheme": "Amber"
 }

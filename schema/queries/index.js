@@ -88,12 +88,12 @@ const queryTracks = (sessionId, trackId) => {
 }
 
 const DownloadedFileType = new GraphQLObjectType({
-    name: 'DownloadedFile',
-    fields: {
-      clip: { type: GraphQLString },
-      id: { type: GraphQLInt },
-      trackid: { type: GraphQLInt }
-    }
+  name: 'DownloadedFile',
+  fields: {
+    clip: { type: GraphQLString },
+    id: { type: GraphQLInt },
+    trackid: { type: GraphQLInt }
+  }
 });
 
 const TrackType = new GraphQLObjectType({
@@ -101,6 +101,14 @@ const TrackType = new GraphQLObjectType({
   fields: {
     id: { type: GraphQLInt },
     sessionid: { type: GraphQLInt }
+  }
+});
+
+const EffectType = new GraphQLObjectType({
+  name: 'Effect',
+  fields: {
+    id: { type: GraphQLInt },
+    trackid: { type: GraphQLInt }
   }
 })
 
@@ -142,6 +150,15 @@ const query = new GraphQLObjectType({
         id: { type: GraphQLInt }
       },
       resolve: (rootValue, args) => (queryTracks(args.sessionid, args.id).then(res=>res))
+    },
+    getEffects: {
+      type: new GraphQLList(EffectType),
+      args: {
+        sessionid: { type: GraphQLInt },
+        id: { type: GraphQLInt },
+        trackid: { type: GraphQLInt }
+      },
+      resolve: () => (null)
     }
   })
 });
