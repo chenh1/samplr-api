@@ -127,7 +127,23 @@ const EffectSettings = new GraphQLObjectType({
   name: 'EffectSettings',
   fields: {
     feedback: { type: GraphQLFloat },
-    speed: { type: GraphQLFloat }
+    time: { type: GraphQLFloat },
+    mix: { type: GraphQLFloat },
+    speed: { type: GraphQLFloat },
+    depth: { type: GraphQLFloat },
+    lowGain: { type: GraphQLFloat },
+    midLowGain: { type: GraphQLFloat },
+    midHighGain: { type: GraphQLFloat },
+    highGain: { type: GraphQLFloat },
+    gain: { type: GraphQLFloat },
+    decay: { type: GraphQLFloat },
+    reverse: { type: GraphQLBoolean },
+    frequency: { type: GraphQLFloat },
+    peak: { type: GraphQLFloat },
+    distortion: { type: GraphQLFloat },
+    threshold: { type: GraphQLFloat },
+    ratio: { type: GraphQLFloat },
+    pan: { type: GraphQLFloat }
   }
 });
 
@@ -139,8 +155,7 @@ const EffectType = new GraphQLObjectType({
     type: { type: GraphQLString },
     ison: { type: GraphQLBoolean },
     chainorder: { type: GraphQLInt },
-    feedback: { type: GraphQLFloat },
-    speed: { type: GraphQLFloat }
+    settings: { type: EffectSettings }
   }
 });
 
@@ -190,7 +205,7 @@ const query = new GraphQLObjectType({
         trackid: { type: GraphQLInt },
         id: { type: GraphQLInt }
       },
-      resolve: (rootValue, args) => (queryEffects(args.sessionid, args.trackid, args.id).then(res=>formatEffectSettings(res)))
+      resolve: (rootValue, args) => (queryEffects(args.sessionid, args.trackid, args.id).then(res=>res))
     }
   })
 });
