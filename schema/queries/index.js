@@ -92,15 +92,15 @@ const queryEffects = (sessionId, trackId, effectId) => {
   return new Promise(resolve => {
     if (sessionId) {
       pool.query('SELECT * FROM effects WHERE sessionid=$1', [sessionId], (err, res) => {        
-        resolve(formatEffectSettings(res.rows));
+        resolve(res.rows);
       });
     } else if (trackId) {
       pool.query('SELECT * FROM effects WHERE trackid=$1', [trackId], (err, res) => {        
-        resolve(formatEffectSettings(res.rows));
+        resolve(res.rows);
       });
     } else {
       pool.query('SELECT * FROM effects WHERE id=$1', [effectId], (err, res) => {
-        resolve(formatEffectSettings(res.rows));
+        resolve(res.rows);
       });
     }
   })
@@ -126,7 +126,8 @@ const TrackType = new GraphQLObjectType({
 const EffectSettings = new GraphQLObjectType({
   name: 'EffectSettings',
   fields: {
-    feedback: { type: GraphQLFloat }
+    feedback: { type: GraphQLFloat },
+    speed: { type: GraphQLFloat }
   }
 });
 
@@ -137,8 +138,9 @@ const EffectType = new GraphQLObjectType({
     trackid: { type: GraphQLInt },
     type: { type: GraphQLString },
     ison: { type: GraphQLBoolean },
-    order: { type: GraphQLInt },
-    settings: { type: EffectSettings }
+    chainorder: { type: GraphQLInt },
+    feedback: { type: GraphQLFloat },
+    speed: { type: GraphQLFloat }
   }
 });
 
@@ -188,7 +190,7 @@ const query = new GraphQLObjectType({
         trackid: { type: GraphQLInt },
         id: { type: GraphQLInt }
       },
-      resolve: (rootValue, args) => (queryEffects(args.sessionid, args.trackid, args.id).then(res=>res))
+      resolve: (rootValue, args) => (queryEffects(args.sessionid, args.trackid, args.id).then(res=>formatEffectSettings(res)))
     }
   })
 });
