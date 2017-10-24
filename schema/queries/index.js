@@ -92,6 +92,7 @@ const queryEffects = (trackId, effectId) => {
   return new Promise(resolve => {
     if (trackId) {
       pool.query('SELECT * FROM effects WHERE trackid=$1', [trackId], (err, res) => {
+        console.log('helper: ', formatEffectSettings);
         console.log(formatEffectSettings(res.rows));
         resolve(res.rows);
       })

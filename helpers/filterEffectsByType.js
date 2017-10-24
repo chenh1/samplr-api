@@ -63,11 +63,11 @@ const settingTypes = {
 };
 
 export const formatEffectSettings = (effectsEntries) => {
-    const formattedEntries = effectsEntries.map(entry => {
+    return effectsEntries.map(entry => {
         let entryParameters = Object.entries(settingTypes[entry.type]);
         entry.settings = {};
 
-        entrySettings.forEach(setting => {
+        entryParameters.forEach(setting => {
             entry.settings[setting] = entry[setting];
         });
 
