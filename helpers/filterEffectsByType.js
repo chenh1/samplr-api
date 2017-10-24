@@ -10,61 +10,60 @@ const types = {
     stereopanner: 'stereopanner'
 };
 
+const params = {
+    feedback: 'feedback',
+    time: 'time',
+    mix: 'mix',
+    speed: 'speed',
+    depth: 'depth',
+    lowGain: 'lowGain',
+    midLowGain: 'midLowGain',
+    midHighGain: 'midHighGain',
+    highGain: 'highGain',
+    gain: 'gain',
+    decay: 'decay',
+    reverse: 'reverse',
+    frequency: 'frequency',
+    peak: 'peak',
+    distortion: 'distortion',
+    threshold: 'threshold',
+    ratio: 'ratio',
+    pan: 'pan'
+};
+
 const settingTypes = {
-    delay: {
-        feedback: 'feedback',
-        time: 'time',
-        mix: 'mix'
-    },
-    flanger: {
-        feedback: 'feedback',
-        time: 'time',
-        mix: 'mix',
-        speed: 'speed',
-        depth: 'depth'
-    },
-    distortion: {
-        gain: 'gain',
-        lowGain: 'lowGain',
-        midLowGain: 'midLowGain',
-        midHighGain: 'midHighGain',
-        highGain: 'highGain',
-        mix: 'mix'
-    },
-    fuzz: {
-        gain: 'gain',
-        lowGain: 'lowGain',
-        midLowGain: 'midLowGain',
-        midHighGain: 'midHighGain',
-        highGain: 'highGain',
-        mix: 'mix'
-    },
-    reverb: {
-        decay: 'decay',
-        reverse: 'reverse',
-        mix: 'mix'
-    },
-    filter: {
-        frequency: 'frequency',
-        peak: 'peak',
-        mix: 'mix'
-    },
-    ringmod: {
-        distortion: 'distortion',
-        mix: 'mix'
-    },
-    compressor: {
-        threshold: 'threshold',
-        ratio: 'ratio'
-    },
-    stereopanner: {
-        pan: 'pan'
-    }
+    delay: [
+        params.feedback, params.time, params.mix
+    ],
+    flanger: [
+        params.feedback, params.time, params.mix, params.speed, params.depth
+    ],
+    distortion: [
+        params.gain, params.lowGain, params.midLowGain, params.midHighGain, params.highGain, params.mix
+    ],
+    fuzz: [ 
+        params.gain, params.lowGain, params.midLowGain, params.midHighGain, params.highGain, params.mix
+    ],
+    reverb: [ 
+        params.decay, params.reverse, params.mix
+    ],
+    filter: [ 
+        params.frequency, params.peak, params.mix
+    ],
+    ringmod: [ 
+        params.distortion, params.mix
+    ],
+    compressor: [ 
+        params.threshold, params.ratio
+    ],
+    stereopanner: [ 
+        params.pan
+    ]
 };
 
 export const formatEffectSettings = (effectsEntries) => {
     return effectsEntries.map(entry => {
-        let entryParameters = Object.entries(settingTypes[entry.type]);
+        let entryParameters = settingTypes[entry.type];
         entry.settings = {};
 
         entryParameters.forEach(setting => {
