@@ -1,6 +1,7 @@
 import { GraphQLObjectType, GraphQLList, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
 import { pool } from '../../server';
 import events from 'events';
+import { formatEffectSettings } from '../../helpers/filterEffectsByType';
 
 let dataBlock = {};
 let dataLoad = new events.EventEmitter();
@@ -91,10 +92,12 @@ const queryEffects = (trackId, effectId) => {
   return new Promise(resolve => {
     if (trackId) {
       pool.query('SELECT * FROM effects WHERE trackid=$1', [trackId], (err, res) => {
+        console.log(formatEffectSettings(res.rows));
         resolve(res.rows);
       })
     } else {
       pool.query('SELECT * FROM effects WHERE id=$1', [effectId], (err, res) => {
+        console.log(res.rows);
         resolve(res.rows);
       })
     }
@@ -171,7 +174,7 @@ const query = new GraphQLObjectType({
         trackid: { type: GraphQLInt },
         id: { type: GraphQLInt }
       },
-      resolve: () => (null)
+      resolve: (rootValue, args) => (queryEffects(args.trackid, args.id).then(res=>res))
     }
   })
 });
