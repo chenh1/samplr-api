@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLList, GraphQLInt, GraphQLString, GraphQLBoolean } from 'graphql';
+import { GraphQLObjectType, GraphQLList, GraphQLInt, GraphQLString, GraphQLBoolean, GraphQLFloat } from 'graphql';
 import { pool } from '../../server';
 import events from 'events';
 import { formatEffectSettings } from '../../helpers/filterEffectsByType';
@@ -123,11 +123,22 @@ const TrackType = new GraphQLObjectType({
   }
 });
 
+const EffectSettings = new GraphQLObjectType({
+  name: 'EffectSettings',
+  fields: {
+    feedback: { type: GraphQLFloat }
+  }
+});
+
 const EffectType = new GraphQLObjectType({
   name: 'Effect',
   fields: {
     id: { type: GraphQLInt },
-    trackid: { type: GraphQLInt }
+    trackid: { type: GraphQLInt },
+    type: { type: GraphQLString },
+    ison: { type: GraphQLBoolean },
+    order: { type: GraphQLInt },
+    settings: { type: EffectSettings }
   }
 });
 
