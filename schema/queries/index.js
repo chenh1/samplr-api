@@ -88,19 +88,20 @@ const queryTracks = (sessionId, trackId) => {
   })
 };
 
-const queryEffects = (trackId, effectId) => {
+const queryEffects = (sessionId, trackId, effectId) => {
   return new Promise(resolve => {
-    if (trackId) {
-      pool.query('SELECT * FROM effects WHERE trackid=$1', [trackId], (err, res) => {
-        console.log('helper: ', formatEffectSettings);
-        console.log(formatEffectSettings(res.rows));
-        resolve(res.rows);
-      })
+    if (sessionId) {
+      pool.query('SELECT * FROM effects WHERE sessionid=$1', [sessionId], (err, res) => {        
+        resolve(formatEffectSettings(res.rows));
+      });
+    } else if (trackId) {
+      pool.query('SELECT * FROM effects WHERE trackid=$1', [trackId], (err, res) => {        
+        resolve(formatEffectSettings(res.rows));
+      });
     } else {
       pool.query('SELECT * FROM effects WHERE id=$1', [effectId], (err, res) => {
-        console.log(res.rows);
-        resolve(res.rows);
-      })
+        resolve(formatEffectSettings(res.rows));
+      });
     }
   })
 }
@@ -172,10 +173,11 @@ const query = new GraphQLObjectType({
     getEffects: {
       type: new GraphQLList(EffectType),
       args: {
+        sessionid: { type: GraphQLInt },
         trackid: { type: GraphQLInt },
         id: { type: GraphQLInt }
       },
-      resolve: (rootValue, args) => (queryEffects(args.trackid, args.id).then(res=>res))
+      resolve: (rootValue, args) => (queryEffects(args.sessionid, args.trackid, args.id).then(res=>res))
     }
   })
 });
