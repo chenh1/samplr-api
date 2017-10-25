@@ -73,3 +73,17 @@ export const formatEffectSettings = (effectsEntries) => {
         return entry;
     });
 }
+
+export const getDefaultParams = (effectType) => {
+    const defaultParams = {
+        keyString: '',
+        valueString: ''
+    };
+
+    settingTypes[effectType].forEach((type, index) => {
+        defaultParams.keyString += index !== settingTypes[effectType].length-1 ? type + ', ': type;
+        defaultParams.valueString += index !== settingTypes[effectType].length-1 ? '0, ': '0';
+    });
+
+    return defaultParams;
+}

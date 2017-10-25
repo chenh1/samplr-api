@@ -1,6 +1,7 @@
 import { GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQLInt } from 'graphql';
 import { pool } from '../../server';
 import { pubsub } from '../index';
+import { getDefaultParams } from '../../helpers/filterEffectsByType';
 
 const updateData = (isPlay, testParam) => {
     return new Promise((resolve) => {
@@ -43,6 +44,16 @@ const deleteTrackFromDB = (trackId) => {
     })
 }
 
+const addEffectToDB = (trackId, isOn, chainOrder, type, sessionId, settings) => {
+    return new Promise((resolve) => {
+        const formattedSettings = getDefaultParams(type);
+
+        pool.query(`INSERT INTO effects(trackid, ison, chainorder, type, sessionid, ${formattedSettings.keyString}) VALUES($1, $2, $3, $4, $5, ${formattedSettings.valueString}) returning id`, [trackId, isOn, chainOrder, type, sessionId], (err, res) => {
+            resolve(res.rows[0]);
+        })
+    })
+}
+
 //DELETE THIS WHEN WE DON'T NEED IT ANYMORE
 const UploadedFileType = new GraphQLObjectType({
     name: 'UploadedFile',
@@ -57,10 +68,17 @@ const FileType = new GraphQLObjectType({
     fields: {
         id: { type: GraphQLInt }
     }
-})
+});
 
 const TrackType = new GraphQLObjectType({
     name: 'TrackType',
+    fields: {
+        id: { type: GraphQLInt }
+    }
+});
+
+const EffectType = new GraphQLObjectType({
+    name: 'EffectType',
     fields: {
         id: { type: GraphQLInt }
     }
@@ -110,6 +128,19 @@ const mutation = new GraphQLObjectType({
             },
             resolve: (rootValue, args) => (deleteTrackFromDB(args.trackid).then(
                 res => pubsub.publish('trackDeleted', {trackDeleted: res})
+            ))
+        },
+        addEffect: {
+            type: EffectType,
+            args: {
+                trackid: { type: GraphQLInt },
+                ison: { type: GraphQLBoolean },
+                chainorder: { type: GraphQLInt },
+                type: { type: GraphQLString },
+                sessionid: { type: GraphQLInt }
+            },
+            resolve: (rootValue, args) => (addEffectToDB(args.trackid, args.ison, args.chainorder, args.type, args.sessionid).then(
+                res => pubsub.publish('effectAdded', {effectAdded: res})
             ))
         }
     })

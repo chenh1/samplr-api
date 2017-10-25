@@ -28,6 +28,11 @@ const subscription = new GraphQLObjectType({
         type: GraphQLInt,
         resolve: payload => payload.trackDeleted.id,
         subscribe: () => pubsub.asyncIterator('trackDeleted')
+      },
+      effectAdded: {
+        type: GraphQLInt,
+        resolve: payload => payload.effectAdded.id,
+        subscribe: () => pubsub.asyncIterator('effectAdded')
       }
     })
 });

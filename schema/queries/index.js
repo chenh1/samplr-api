@@ -205,7 +205,7 @@ const query = new GraphQLObjectType({
         trackid: { type: GraphQLInt },
         id: { type: GraphQLInt }
       },
-      resolve: (rootValue, args) => (queryEffects(args.sessionid, args.trackid, args.id).then(res=>res))
+      resolve: (rootValue, args) => (queryEffects(args.sessionid, args.trackid, args.id).then(res=>formatEffectSettings(res)))
     }
   })
 });
