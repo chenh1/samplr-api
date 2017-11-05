@@ -33,6 +33,11 @@ const subscription = new GraphQLObjectType({
         type: GraphQLInt,
         resolve: payload => payload.effectAdded.id,
         subscribe: () => pubsub.asyncIterator('effectAdded')
+      },
+      settingChanged: {
+        type: GraphQLInt,
+        resolve: payload => payload.settingChanged.id,
+        subscribe: () => pubsub.asyncIterator('settingChanged')
       }
     })
 });

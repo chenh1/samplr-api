@@ -81,8 +81,9 @@ export const getDefaultParams = (effectType) => {
     };
 
     settingTypes[effectType].forEach((type, index) => {
+        let value = effectType === params.reverse ? 'false' : '0';
         defaultParams.keyString += index !== settingTypes[effectType].length-1 ? type + ', ': type;
-        defaultParams.valueString += index !== settingTypes[effectType].length-1 ? '0, ': '0';
+        defaultParams.valueString += index !== settingTypes[effectType].length-1 ? `${value}, `: value;
     });
 
     return defaultParams;

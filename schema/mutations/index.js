@@ -35,10 +35,18 @@ const createTrackToDB = (sessionId) => {
     })
 };
 
+const changeEffectSetting = (setting, value, effectId) => {
+    return new Promise((resolve) => {
+        pool.query(`UPDATE effects SET $1=$2 WHERE id = $3 returning id`, [setting, value, effectId], (err, res) => {
+            resolve(res);
+        })
+    })
+}
+
 //DELETE FROM tracks WHERE trackid = $1, [trackId]
 const deleteTrackFromDB = (trackId) => {
     return new Promise((resolve) => {
-        pool.query(`UPDATE tracks SET deleted=true WHERE id=$1 returning id`, [trackId], (err, res) => {
+        pool.query(`INSERT INTO tracks(sessionid) VALUES ($1) returning id`, [sessionId], (err, res) => {
             resolve(res.rows[0]);
         })
     })
@@ -49,6 +57,7 @@ const addEffectToDB = (trackId, isOn, chainOrder, type, sessionId, settings) => 
         const formattedSettings = getDefaultParams(type);
 
         pool.query(`INSERT INTO effects(trackid, ison, chainorder, type, sessionid, ${formattedSettings.keyString}) VALUES($1, $2, $3, $4, $5, ${formattedSettings.valueString}) returning id`, [trackId, isOn, chainOrder, type, sessionId], (err, res) => {
+            console.log(res, err)
             resolve(res.rows[0]);
         })
     })
@@ -82,7 +91,14 @@ const EffectType = new GraphQLObjectType({
     fields: {
         id: { type: GraphQLInt }
     }
-})
+});
+
+const ChangedType = new GraphQLObjectType({
+    name: 'ChangedType',
+    fields: {
+        id: { type: GraphQLInt }
+    }
+});
 
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
@@ -141,6 +157,17 @@ const mutation = new GraphQLObjectType({
             },
             resolve: (rootValue, args) => (addEffectToDB(args.trackid, args.ison, args.chainorder, args.type, args.sessionid).then(
                 res => pubsub.publish('effectAdded', {effectAdded: res})
+            ))
+        },
+        changeEffectSetting: {
+            type: ChangedType,
+            args: {
+                effectid: { type: GraphQLInt },
+                setting: { type: GraphQLString },
+                value: { type: GraphQLInt }
+            },
+            resolve: (rootValue, args) => (changeEffectSetting(args.effectid, args.setting, args.value).then(
+                res => pubsub.publish('settingChanged', {settingChanged: res})
             ))
         }
     })
