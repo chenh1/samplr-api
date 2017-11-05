@@ -35,10 +35,11 @@ const createTrackToDB = (sessionId) => {
     })
 };
 
-const changeEffectSetting = (setting, value, effectId) => {
+const changeEffectSetting = (effectId, setting, value) => {
     return new Promise((resolve) => {
         pool.query(`UPDATE effects SET $1=$2 WHERE id = $3 returning id`, [setting, value, effectId], (err, res) => {
-            resolve(res);
+            console.log(res.rows[0])
+            resolve(res.rows[0]);
         })
     })
 }
@@ -162,11 +163,11 @@ const mutation = new GraphQLObjectType({
         changeEffectSetting: {
             type: ChangedType,
             args: {
-                effectid: { type: GraphQLInt },
+                id: { type: GraphQLInt },
                 setting: { type: GraphQLString },
                 value: { type: GraphQLInt }
             },
-            resolve: (rootValue, args) => (changeEffectSetting(args.effectid, args.setting, args.value).then(
+            resolve: (rootValue, args) => (changeEffectSetting(args.id, args.setting, args.value).then(
                 res => pubsub.publish('settingChanged', {settingChanged: res})
             ))
         }
