@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQLInt } from 'graphql';
+import { GraphQLObjectType, GraphQLBoolean, GraphQLString, GraphQLInt, GraphQLFloat } from 'graphql';
 import { pool } from '../../server';
 import { pubsub } from '../index';
 import { getDefaultParams } from '../../helpers/filterEffectsByType';
@@ -36,9 +36,10 @@ const createTrackToDB = (sessionId) => {
 };
 
 const changeEffectSetting = (effectId, setting, value) => {
+    console.log(effectId, value, setting)
     return new Promise((resolve) => {
-        pool.query(`UPDATE effects SET $1=$2 WHERE id = $3 returning id`, [setting, value, effectId], (err, res) => {
-            console.log(res.rows[0])
+        pool.query(`UPDATE effects SET ${setting}=${value} WHERE id = ${effectId} returning id`, (err, res) => { //using old template string because of key-value pair requirement
+            console.log(res)
             resolve(res.rows[0]);
         })
     })
@@ -48,7 +49,7 @@ const changeEffectSetting = (effectId, setting, value) => {
 const deleteTrackFromDB = (trackId) => {
     return new Promise((resolve) => {
         pool.query(`INSERT INTO tracks(sessionid) VALUES ($1) returning id`, [sessionId], (err, res) => {
-            resolve(res.rows[0]);
+            resolve(res);
         })
     })
 }
@@ -165,7 +166,7 @@ const mutation = new GraphQLObjectType({
             args: {
                 id: { type: GraphQLInt },
                 setting: { type: GraphQLString },
-                value: { type: GraphQLInt }
+                value: { type: GraphQLFloat }
             },
             resolve: (rootValue, args) => (changeEffectSetting(args.id, args.setting, args.value).then(
                 res => pubsub.publish('settingChanged', {settingChanged: res})
